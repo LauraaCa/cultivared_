@@ -1,0 +1,116 @@
+{% extends 'comprador/baseComprador.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/compradorHome.css') }}">
+</head>
+<body>
+
+<!-- Barra de busqueda -->
+<div class="search-container">
+  <input type="text" class="search-input" placeholder="¿Que estas buscando hoy?">
+  <button class="search-button">
+      🔍
+  </button>
+</div>
+
+<div class="container">
+
+  <!-- Zona de Filtros -->
+  <div class="filters">
+    <!-- Multi-Range -->
+    <div class="filter-section">
+      <h3>Multi-Range</h3>
+      <ul>
+        <li><a href="#">Under $10</a></li>
+        <li><a href="#">$10 - $100</a></li>
+        <li><a href="#">$100 - $500</a></li>
+        <li><a href="#">Above $500</a></li>
+      </ul>
+    </div>
+
+    <!-- Slider -->
+    <div class="filter-section">
+      <h3>Slider</h3>
+      <input type="range" min="0" max="500" value="199" id="priceRange" />
+      <div class="slider-value">
+        <span id="rangeOutput">199</span> - 500
+      </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="filter-section">
+      <h3>Category</h3>
+      <ul>
+        <li>
+          <input type="checkbox" id="cat1" />
+          <label for="cat1">Cell Phones</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat2" />
+          <label for="cat2">Computers & Tablets</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat3" />
+          <label for="cat3">Audio</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat4" />
+          <label for="cat4">Appliances</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat5" />
+          <label for="cat5">Cameras & Camcorders</label>
+        </li>
+        <!-- Agrega más categorías según necesites -->
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="product-cards-container">
+    <div class="row justify-content-center">
+      {% for p in producto %}
+        <div class="col-md-4 col-sm-6 mb-4">
+          <div class="card h-100">
+            {% if p[3] %}
+              <img src="{{ p[3] }}" class="card-img-top" alt="Imagen de {{ p[1] }}">
+            {% else %}
+              <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="card-img-top" alt="Sin imagen">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ p[1] }}</h5>
+              <p class="card-text">{{ p[2] }}</p>
+              <p class="card-text"><small class="text-muted">Cantidad: {{ p[4] }}</small></p>
+              <p class="card-text font-weight-bold">$ {{ p[5] }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Ejemplo para mostrar el valor del slider en tiempo real
+  const priceRange = document.getElementById('priceRange');
+  const rangeOutput = document.getElementById('rangeOutput');
+
+  priceRange.addEventListener('input', () => {
+    rangeOutput.textContent = priceRange.value;
+  });
+</script>
+
+
+</body>
+</html>
+
+{% endblock %}

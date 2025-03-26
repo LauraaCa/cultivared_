@@ -1,0 +1,59 @@
+# Crear tabla
+def crear_tabla_usuarios():
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS usuarios (
+                        id BIGSERIAL PRIMARY KEY,
+                        nombre VARCHAR(255) NOT NULL,
+                        apellido VARCHAR(255) NOT NULL,
+                        genero VARCHAR(20) NOT NULL,
+                        email VARCHAR(255) UNIQUE NOT NULL,
+                        telefono VARCHAR(20) UNIQUE NOT NULL,
+                        rol VARCHAR(20) NOT NULL,
+                        contrasena VARCHAR(100) NOT NULL
+                    )
+                """)
+                conn.commit()  # IMPORTANTE: Guardar los cambios en la BD
+                print("Tabla 'usuarios' creada exitosamente.")
+        except Exception as ex:
+            print("Error al crear la tabla:", ex)
+        finally:
+            conn.close()
+    else:
+        print("No se pudo conectar a la base de datos.")
+
+# Ejecutar creación de tabla
+crear_tabla_usuarios()
+
+# Función para crear la tabla productos
+def crear_tabla_productos():
+    conn = get_connection()  # CORREGIDO: Llamar correctamente la función
+    if conn:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS productos (
+                        id BIGSERIAL PRIMARY KEY,
+                        nombre VARCHAR(255) NOT NULL,
+                        descripcion TEXT NOT NULL,
+                        categoria VARCHAR(250) NOT NULL,
+                        cantidad INTEGER NOT NULL,  -- Cambiado a INTEGER si representa unidades
+                        precio DECIMAL(10,2) NOT NULL,
+                        id_vendedor BIGINT NOT NULL,
+                        FOREIGN KEY (id_vendedor) REFERENCES usuarios(id) ON DELETE CASCADE
+                    )
+                """)
+                conn.commit()  # IMPORTANTE: Guardar los cambios en la BD
+                print("Tabla 'productos' creada exitosamente.")  # Mensaje corregido
+        except Exception as ex:
+            print("Error al crear la tabla:", ex)
+        finally:
+            conn.close()
+    else:
+        print("No se pudo conectar a la base de datos.")
+
+# Ejecutar creación de tabla
+crear_tabla_productos()

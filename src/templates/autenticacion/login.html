@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% with mensaje = get_flashed_messages() %}
+
+<ul class="flash-messages">
+  {% for mensaje in messages %}
+  <li>{{ mensaje }}</li>
+  {% endfor %}
+</ul>
+
+{% endwith %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block body %}
+  <div class="login-page">
+    <div class="login-box">
+      <h1 title="Bienvenido">¡Bienvenido!</h1>
+      <form action="/CULTIVARED/login" method="POST">
+        <input type="text" name="email" placeholder="Email" required title="Campo de email">
+        <input type="password" name="contrasena" placeholder="Contraseña" required title="Campo de contraseña">
+        <button type="submit" id="log" title="Iniciar Sesión">Iniciar Sesión</button>
+      </form>
+      <a href="/CULTIVARED/Registro" class="sign-up" title="¿No tienes una cuenta? Registrate!">¿No tienes una cuenta? Registrate!</a>
+      <div class="img">
+        <img src="{{ url_for('static', filename='img/logoo.png') }}" title="Logo de CultivaRed">
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% endblock %}

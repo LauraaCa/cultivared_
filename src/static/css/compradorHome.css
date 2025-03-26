@@ -1,0 +1,196 @@
+.search-container {
+    display: flex;
+    align-items: center;
+    background: #D9CAB3;
+    border-radius: 25px;
+    padding: 10px 15px;
+    width: 30%;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+    
+    /* Centramos la barra de búsqueda en la página */
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.search-input::placeholder {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    font-size: 16px;
+    color: #8C7A6B;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    font-size: 16px;
+    color: #000000;
+}
+
+.search-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+}
+
+
+.container {
+    display: flex;
+    padding-top: 5%;
+    padding-left: 2%;
+    max-width: 100%;
+    margin: 0 auto; /* Centra el contenedor */
+  }
+  
+  /* ========== FILTROS ========== */
+  .filters {
+    background: #D9CAB3;
+    border-radius: 8px;
+    width: 15%;
+    padding-right: 1px;
+  }
+  
+  .filter-section {
+    padding: 7%;
+    margin-bottom: 20px;
+  }
+  
+  .filter-section h3 {
+    color: #5E0B15;
+    margin-bottom: 10px;
+  }
+  
+  
+  .filter-section ul {
+    color: #000000;
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .filter-section ul li {
+    margin-bottom: 5px;
+  }
+  
+
+  /* Opcional: estilo para enlaces de rango */
+  .filter-section ul li a {
+    color: #000000;
+    text-decoration: none;
+  }
+  .filter-section ul li a:hover {
+    color: #5E0B15;
+    text-decoration: underline;
+  }
+  
+  /* Slider */
+  .slider-value {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #000000;
+  }
+  
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #8C7A6B; /* Color de fondo de la barra sin llenar */
+    border-radius: 5px;
+    outline: none;
+  }
+
+  /* Estilo para el pulgar en navegadores WebKit */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #90323D; /* Color del pulgar */
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: 0px; /* Ajusta para centrar el pulgar en la barra */
+  }
+  
+  input[type="range"]::-webkit-slider-thumb:hover {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #5E0B15; /* Color del pulgar */
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: 0px; /* Ajusta para centrar el pulgar en la barra */
+  }
+
+/* Estilos generales para el contenedor de tarjetas */
+.product-cards-container {
+  margin-left: 2%; /* Espacio desde otros elementos si lo deseas */
+}
+
+/* Tarjeta de producto */
+.card.h-100 {
+  background-color: #8C7A6B;  /* Fondo marrón claro */
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+}
+
+/* Imagen de la tarjeta */
+.card-img-top {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+  background-color: none;
+}
+
+/* Cuerpo de la tarjeta */
+.card-body {
+  height: 10%;
+  background-color: #D9CAB3;  /* Fondo claro */
+  text-align: center;
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 5%;
+  margin: 6%;
+}
+
+/* Título del producto */
+.card-title {
+  color: #4a3320;  /* Marrón oscuro */
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+/* Texto de descripción, cantidad y precio */
+.card-text {
+  color: #4a3320;
+  margin-bottom: 6px;
+}
+
+/* Precio en negrita */
+.font-weight-bold {
+  font-weight: bold;
+  color: #4a3320;
+}
+
+.row {
+  margin-left: 0%;
+  margin-right: 0%;
+}
+
+.row > div {
+  padding-left: 0%;
+  padding-right: 0%;
+}

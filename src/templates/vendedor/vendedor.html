@@ -1,0 +1,79 @@
+{% extends 'vendedor/vendedorBase.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendedorHome.css') }}">
+</head>
+<body>
+
+<!-- Carrusel -->
+<div class="carousel-container">
+    <button class="arrow prev" onclick="moveCarousel(-1)">&#10094;</button>
+    <div class="carousel-wrapper">
+        <div class="carousel" id="carousel">
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/mas.png') }}">
+                <h5>Registro de productos</h5>
+                <a href="/VENDEDOR/RegistroProductos" class="btn btn-show btn-sm">Mostrar</a>
+            </div>
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/folleto.png') }}">
+                <h5>Catálogo de productos</h5>
+                <a href="/VENDEDOR/MisProductos" class="btn btn-show btn-sm">Mostrar</a>
+            </div>
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/historial-de-transacciones.png') }}">
+                <h5>Historial de pedidos</h5>
+                <a href="/VENDEDOR/HistorialPedidos" class="btn btn-show btn-sm">Mostrar</a>
+            </div>
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/etiqueta-del-precio.png') }}">
+                <h5>Resumen de ventas</h5>
+                <a href="/VENDEDOR/ResumenVentas" class="btn btn-show btn-sm">Mostrar</a>
+            </div>
+            <div class="card">
+                <img src="{{ url_for('static', filename='img/editar.png') }}">
+                <h5>Perfil</h5>
+                <a href="/VENDEDOR/MiPerfil" class="btn btn-show btn-sm">Mostrar</a>
+            </div>
+        </div>
+    </div>
+    <button class="arrow next" onclick="moveCarousel(1)">&#10095;</button>
+</div>
+
+<script>
+    let index = 0;
+    const carousel = document.getElementById("carousel");
+    const cards = document.querySelectorAll(".card");
+    const cardWidth = cards[0].offsetWidth + 20; // Incluye el margen
+    const visibleCards = 3; // Siempre mostrará 3 tarjetas a la vez
+
+    function moveCarousel(direction) {
+        index += direction;
+
+        const maxIndex = cards.length - visibleCards;
+        if (index < 0) {
+            index = 0;
+        } else if (index > maxIndex) {
+            index = maxIndex;
+        }
+
+        const scrollAmount = index * cardWidth;
+        carousel.style.transform = `translateX(-${scrollAmount}px)`;
+    }
+
+</script>
+
+
+</body>
+</html>
+
+{% endblock %}
