@@ -1,0 +1,78 @@
+
+{% extends 'base.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTOR</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <link rel="stylesheet" href="/src/static/css/gestor.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestor.css') }}">
+</head>
+<body>
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Dashboard de Estadísticas</h2>
+    
+        <div class="card">
+            <h5>Total de Vendedores: {{ total_vendedores }}</h5>
+            <h5>Total de Compradores: {{ total_compradores }}</h5>
+            <h5>Total de Ingresos: ${{ total_ingresos }}</h5>
+        </div>
+    
+        <div class="chart-container">
+            <h3>Ventas por Vendedor</h3>
+            <div style="width: 300px; height: 150px;">
+                <canvas id="ventasChart"></canvas>
+            </div>
+        
+            <h3>Productos Más Vendidos</h3>
+            <div style="width: 300px; height: 150px;">
+                <canvas id="productosChart"></canvas>
+            </div>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx1 = document.getElementById('ventasChart').getContext('2d');
+    var ventasChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: [{% for vendedor, _ in ventas_por_vendedor %}"{{ vendedor }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Ventas',
+                data: [{% for _, ventas in ventas_por_vendedor %}{{ ventas }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+</script>
+
+
+<script>
+    var ctx2 = document.getElementById('productosChart').getContext('2d');
+    var productosChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: [{% for producto, _ in productos_mas_vendidos %}"{{ producto }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Cantidad',
+                data: [{% for _, cantidad in productos_mas_vendidos %}{{ cantidad }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['red', 'blue', 'green', 'yellow', 'purple']
+            }]
+        }
+    });
+</script>
+</body>
+</html>
+
+{% endblock %}
