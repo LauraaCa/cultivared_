@@ -45,8 +45,25 @@ def gestion_usuarios():
 
         print("Usuarios obtenidos:", users)  # Verifica en consola qué datos se están trayendo
 
-        return render_template('gestor/gestionUsuarios.html', users=users, selected_role=rol)
+        return render_template('gestor/gestionUsuarios.html', usuarios=users, selected_role=rol)
     else:
         return redirect(url_for('auth.login'))
 
 
+def obtener_usuario_por_id(user_id):
+    connection = get_connection()  # Asegúrate de tener tu conexión a la DB
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM usuarios WHERE id = %s", (user_id,))
+    usuario = cursor.fetchone()
+    connection.close()
+    return usuario
+
+@main.route('/GESTOR/perfil_usuario/<int:user_id>')
+def perfil_usuario(user_id):
+    # Aquí debes obtener los datos del usuario desde la base de datos
+    user = obtener_usuario_por_id(user_id)  # Función que debes definir
+    print(f"Usuario encontrado: {user}")
+    if not user:
+        return "Usuario no encontrado", 404
+    
+    return render_template('gestor/perfil_usuario.html', user=user)
