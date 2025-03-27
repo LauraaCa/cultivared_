@@ -28,7 +28,7 @@
                     <!-- Card de Perfil -->
                     <div class="card perfil-card">
                         <div class="card-header text-center">
-                            <h2>Perfil del Gestor</h2>
+                            <h2>Perfil del Usuario</h2>
                         </div>
                         <div class="card-body">
                             <div class="text-center">
@@ -37,6 +37,7 @@
                             <h4 class="text-center">{{ user[1] }} {{ user[2] }}</h4>
                             <div class="perfil-info">
                                 <p><strong>Email:</strong> {{ user[4] }}</p>
+
                                 <p><strong>Teléfono:</strong> {{ user[5] }}</p>
                                 <p><strong>Rol:</strong> {{ user[6] }}</p>
                             </div>
@@ -49,13 +50,14 @@
                     <!-- Card del Menú -->
                     <div class="card menu-card">
                         <div class="card-header text-center">
-                            <h2>Menú del Gestor</h2>
+                            <h4 class="text-center">Menu de {{ user[1] }} {{ user[2] }}</h4>
                         </div>
                         <div class="card-body">
                             <ul class="menu-list">
-                                <li><a href="{{ url_for('gestor_blueprint.gestion_usuarios') }}">Gestión de Usuarios</a></li>
-                                <li><a href="#">Dashboard</a></li>
-                                <li><a href="#">Comparativas y Ranking</a></li>
+                                <!-- aqui vienen estadisticas, inventario, graficos -->
+                                <li><a href="#">Inventario</a></li>
+                                <li><a href="#">Reportes</a></li>
+                                <li><a href="#">Graficos</a></li>
                             </ul>
                         </div>    
                     </div>
