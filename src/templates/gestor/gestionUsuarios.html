@@ -1,0 +1,118 @@
+
+{% extends 'base.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTOR</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <link rel="stylesheet" href="/src/static/css/gestor.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestor.css') }}">
+</head>
+<body>
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+        </div>
+    </nav>
+
+    <h2 class="text-center">Gestión de Usuarios</h2>
+
+    <!-- Filtro por rol -->
+    <div class="filter-container mb-3">
+        <label for="roleFilter" class="filter-label">Filtrar por rol:</label>
+        <select id="roleFilter" class="form-select w-25 d-inline-block">
+            <option value="all" {% if selected_role == 'all' %}selected{% endif %}>Todos</option>
+            <option value="vendedor" {% if selected_role == 'vendedor' %}selected{% endif %}>Vendedor</option>
+            <option value="comprador" {% if selected_role == 'comprador' %}selected{% endif %}>Comprador</option>
+        </select>
+    </div>
+    
+    <script>
+        document.getElementById("roleFilter").addEventListener("change", function () {
+            let selectedRole = this.value;
+            window.location.href = "/gestion_usuarios?rol=" + selectedRole;
+        });
+    </script>
+    
+    <body>
+        <div class="container mt-4">
+            
+            <table class="table table-striped table-bordered mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Género</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in usuarios %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>{{ user[3] }}</td>
+                        <td>{{ user[4] }}</td>
+                        <td>{{ user[5] }}</td>
+                        <td>
+                            <form method="POST" class="d-flex">
+                                <input type="hidden" name="usuario_id" value="{{ user[0] }}">
+                                <select name="nuevo_rol" class="form-select">
+                                    <option value="Admin" {% if user[6] == "Admin" %}selected{% endif %}>Admin</option>
+                                    <option value="Gestor" {% if user[6] == "Gestor" %}selected{% endif %}>Gestor</option>
+                                    <option value="Vendedor" {% if user[6] == "Vendedor" %}selected{% endif %}>Vendedor</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary ms-2">Actualizar</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger">Eliminar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+
+
+
+
+
+
+
+
+    <script>
+        function filterTable() {
+            let filter = document.getElementById("roleFilter").value.toLowerCase();
+            let rows = document.querySelectorAll("#usersTable tbody tr");
+    
+            rows.forEach(row => {
+                let role = row.querySelector(".role").textContent.trim().toLowerCase();
+                if (filter === "all" || role === filter) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+    
+
+
+
+</body>
+</html>
+
+{% endblock %}

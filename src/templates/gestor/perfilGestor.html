@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTOR</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <link rel="stylesheet" href="/src/static/css/gestor.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestor.css') }}">
+</head>
+<body>
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+        </div>
+
+
+    </nav>
+    <body class="bg-light">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <!-- Contenedor de ambas tarjetas en la misma fila -->
+                <div class="d-flex justify-content-between perfil-wrapper">
+                    <!-- Card de Perfil -->
+                    <div class="card perfil-card">
+                        <div class="card-header text-center">
+                            <h2>Perfil del Gestor</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Perfil" class="perfil-img">
+                            </div>
+                            <h4 class="text-center">{{ user[1] }} {{ user[2] }}</h4>
+                            <div class="perfil-info">
+                                <p><strong>Email:</strong> {{ user[4] }}</p>
+                                <p><strong>Teléfono:</strong> {{ user[5] }}</p>
+                                <p><strong>Rol:</strong> {{ user[6] }}</p>
+                            </div>
+                            <div class="text-center">
+                                <a href="/CULTIVARED/logout" class="btn btn-danger">Cerrar sesión</a>
+                            </div>
+                        </div>    
+                    </div>
+    
+                    <!-- Card del Menú -->
+                    <div class="card menu-card">
+                        <div class="card-header text-center">
+                            <h2>Menú del Gestor</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="menu-list">
+                                <li><a href="{{ url_for('gestor_blueprint.gestion_usuarios') }}">Gestión de Usuarios</a></li>
+                                <li><a href="#">Reportes</a></li>
+                                <li><a href="#">Configuraciones</a></li>
+                                <li><a href="#">Ayuda</a></li>
+                            </ul>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</body>
+</html>
+
+{% endblock %}
