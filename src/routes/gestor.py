@@ -67,3 +67,52 @@ def perfil_usuario(user_id):
         return "Usuario no encontrado", 404
     
     return render_template('gestor/perfil_usuario.html', user=user)
+
+
+@main.route('/dashboard')
+def dashboard():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # 🔹 1. Total de vendedores y compradores
+    cur.execute("""
+        SELECT 
+            COUNT(CASE WHEN rol = 'vendedor' THEN 1 END) AS total_vendedores,
+            COUNT(CASE WHEN rol = 'comprador' THEN 1 END) AS total_compradores
+        FROM usuarios;
+    """)
+    total_vendedores, total_compradores = cur.fetchone()
+
+    # 🔹 2. Ventas realizadas por cada vendedor
+    cur.execute("""
+        SELECT u.nombre, COUNT(p.id) AS total_ventas
+        FROM usuarios u
+        JOIN productos p ON u.id = p.id_vendedor
+        GROUP BY u.nombre
+        ORDER BY total_ventas DESC;
+    """)
+    ventas_por_vendedor = cur.fetchall()
+
+    # 🔹 3. Productos más vendidos
+    cur.execute("""
+        SELECT nombre, cantidad FROM productos ORDER BY cantidad DESC LIMIT 5;
+    """)
+    productos_mas_vendidos = cur.fetchall()
+
+    # 🔹 4. Total de ingresos generados
+    cur.execute("""
+        SELECT SUM(precio * cantidad) FROM productos;
+    """)
+    total_ingresos = cur.fetchone()[0]
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'gestor/dashboard.html', 
+        total_vendedores=total_vendedores, 
+        total_compradores=total_compradores,
+        ventas_por_vendedor=ventas_por_vendedor,
+        productos_mas_vendidos=productos_mas_vendidos,
+        total_ingresos=total_ingresos
+    )
