@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+{% extends 'administrador/baseAdmin.html' %}
+
+{% block body %}
+
+<!-- Enlace a adminperfil.css -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<!-- Contenedor -->
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <!-- Card principal -->
+  <div class="profile-card card" style="max-width: 400px; width: 100%;">
+    <div class="card-body">
+        
+      <!-- Titulo -->
+      <h2 class="text-center mb-4" style="font-weight: 700;">
+        Perfil del administrador
+      </h2>
+      
+      <!-- Imagen y nombre -->
+      <div class="d-flex flex-column align-items-center">
+        <img src="https://via.placeholder.com/150"
+             alt="Profile Picture"
+             class="profile-picture mb-3">
+        <h3 class="mb-0">{{ user[1] }} {{ user[2] }}</h3>
+      </div>
+
+      <div class="mt-4" style="text-align: left;">
+
+        <!-- Rol Email y Telefono -->
+        <p><strong>Rol:</strong> {{ user[6] }}</p>
+        <p><strong>Email:</strong> {{ user[4] }}</p>
+        <p class="mb-4"><strong>Teléfono:</strong> {{ user[5] }}</p>
+      </div>
+      
+      <!-- Botón Editar -->
+      <div class="text-center mt-5">
+        <a href="/ADMINISTRADOR/editar/{{ user[0] }}" class="btn btn-primary">Editar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

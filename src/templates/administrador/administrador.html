@@ -1,38 +1,72 @@
+<!DOCTYPE html>
 {% extends 'administrador/baseAdmin.html' %}
 
 {% block body %}
-
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Enlace a tu CSS (adminperfil.css) -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
 
 <div class="container mt-5">
-  <div class="profile-card card">
-    <div class="card-body text-center">
-      <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-picture mb-3">
-      <h3 class="card-title">{{ user[2] }}</h3>
-      <h4 class="card-title">{{ user[1] }}</h4>
-      <h5 class="card-subtitle mb-2 text-muted">{{ user[0] }}</h5>
-      <p class="card-text">Rol: {{ user[8] }}</p>
-      <div class="row">
-        <div class="col-sm-6">
-          <p><strong>Genero:</strong> {{ user[3] }}</p>
-          <p><strong>Email:</strong> {{ user[5] }}</p>
-        </div>
-        <div class="col-sm-6">
-          <p><strong
-            >Telefono:</strong> {{ user[4] }}</p>
-          <p><strong>Contraseña:</strong> {{ user[6] }}</p>
+  <!-- Título -->
+  <h1 class="text-center" id="panel-title">Panel de control</h1>
+
+  <div class="row justify-content-center mt-4">
+
+    <!--Transacciones -->
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="row justify-content-center mt-5"></div>
+      <div class="card text-center custom-card">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center"></div>
+        <!-- Imagen -->
+         <img 
+          src="{{ url_for('static', filename='img/transacciones.png') }}" 
+          alt="Icono Transacciones" 
+          class="card-img-top mx-auto d-block icono-color"
+          style="width: 80px; margin-top: 20px;"
+         >  
+        <div class="card-body">
+          <h5 class="card-title">Transacciones</h5>
+          <a href="/ADMINISTRADOR/transacciones" class="btn btn-secondary mt-2">Mostrar</a>
         </div>
       </div>
-      <div class="mt-3">
-        <a href="/editar/{{ user[0] }}" class="btn btn-primary">Editar</a>
+    </div>
+
+    <!--Productos -->
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="row justify-content-center mt-5"></div>
+      <div class="card text-center custom-card">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center"></div>
+        <!-- Imagen -->
+         <img 
+          src="{{ url_for('static', filename='img/productos.png') }}" 
+          alt="Icono Productos" 
+          class="card-img-top mx-auto d-block icono-color"
+          style="width: 80px; margin-top: 20px;"
+         >
+        <div class="card-body">
+          <h5 class="card-title">Productos</h5>
+          <a href="/ADMINISTRADOR/productos" class="btn btn-secondary mt-2">Mostrar</a>
+        </div>
+      </div>
+    </div>
+
+    <!--Usuarios -->
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="row justify-content-center mt-5"></div>
+      <div class="card text-center custom-card">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center"></div>
+        <!-- Imagen -->
+         <img 
+         src="{{ url_for('static', filename='img/usuariosAdm.png') }}" 
+         alt="Icono Usuarios" 
+         class="card-img-top mx-auto d-block icono-color"
+         style="width: 80px; margin-top: 20px;"
+         >
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <a href="/ADMINISTRADOR/crud" class="btn btn-secondary mt-2">Mostrar</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Bootstrap JS (opcional, solo si necesitas funcionalidades JS de Bootstrap) -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 {% endblock %}

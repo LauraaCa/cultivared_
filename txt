@@ -57,3 +57,31 @@ def crear_tabla_productos():
 
 # Ejecutar creación de tabla
 crear_tabla_productos()
+
+# Función crear tabla transacciones
+def crear_tabla_transacciones():
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS transacciones (
+                        id BIGSERIAL PRIMARY KEY,
+                        id_usuario BIGINT NOT NULL,
+                        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        total DECIMAL(10,2) NOT NULL,
+                        descripcion TEXT,
+                        FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+                    )
+                """)
+                conn.commit()  # Guarda los cambios en la BD
+                print("Tabla 'transacciones' creada exitosamente.")
+        except Exception as ex:
+            print("Error al crear la tabla transacciones:", ex)
+        finally:
+            conn.close()
+    else:
+        print("No se pudo conectar a la base de datos.")
+
+# Ejecutar creación de tabla
+crear_tabla_transacciones()

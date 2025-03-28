@@ -2,7 +2,7 @@
 
 body {
   background-color: #f9f9f9;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Baloo 2', cursive;;
 }
 
 .container-perfil  {
@@ -56,7 +56,7 @@ body {
 }
 
 .profile-card .btn-primary {
-  background-color: #00b9f5;
+  background-color: #5E0B15;
   border: none;
   padding: 10px 20px;
   border-radius: 25px;
@@ -66,7 +66,7 @@ body {
 }
 
 .profile-card .btn-primary:hover {
-  background-color: #009edb;
+  background-color: #90323D;
 }
 
 .profile-card .row {
@@ -78,7 +78,7 @@ body {
 }
 
 .profile-card p {
-  margin: 5px 0;
+  /*margin: 5px 0;*/
   font-family: 'Poppins', sans-serif;
 }
 
@@ -98,11 +98,91 @@ body {
   margin: 0;
   font-size: 0.9rem;
   color: #6c757d;
-  text-align: center; /* Centrar el texto */
+  text-align: center; 
 }
 
 .info-box strong {
   display: block;
   margin-bottom: 5px;
   color: #333;
+}
+
+#panel-title {
+  color: #BC8034; 
+  font-weight: 700;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.custom-card {
+  background-color: #D9CAB3; 
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease-in-out;
+  min-height: 300px;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+/* Asegura que la imagen, el título y el botón tengan un espaciado adecuado */
+.custom-card .card-body {
+  padding: 2rem; /* Puedes ajustar este valor */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-card .card-body img {
+  width: 80px;  /* O el tamaño que prefieras */
+  margin-bottom: 1rem;
+}
+
+.custom-card .card-body .card-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem; /* Ajusta el tamaño del título */
+}
+
+.custom-card .card-body a.btn-secondary {
+  margin-top: 1rem;
+}
+
+.custom-card:hover {
+  transform: translateY(-5px);
+}
+
+.custom-card .btn-secondary {
+  background-color: #8C7A6B; /* Café/dorado */
+  border: none;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 8px 20px;
+  color: #D9CAB3; /* Texto blanco */
+}
+
+.custom-card .btn-secondary:hover {
+  background-color: #8C7A6B; /* Un tono más oscuro */
+}
+
+.editar-perfil .custom-card {
+  background-color: #D9CAB3; /* Puedes mantener o cambiar este fondo */
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease-in-out;
+  min-height: auto;        /* Permite que la altura se ajuste al contenido */
+  max-width: 1000px;        /* Define el ancho máximo que deseas, por ejemplo, 1000px */
+  margin: 0 auto;
+  padding: 2rem;           /* Espaciado interno amplio */
+}
+
+/* Ejemplo de filtro que convierte la imagen a un tono café/dorado */
+.icono-color {
+  filter: 
+   invert(52%) 
+   sepia(21%) 
+   saturate(357%) 
+   hue-rotate(345deg) 
+   brightness(89%) 
+   contrast(87%);
 }
