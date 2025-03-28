@@ -25,4 +25,11 @@ class Producto(db.Model):
     id_vendedor = db.Column(db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
     vendedor = db.relationship("Usuarios", backref=db.backref("productos", lazy=True))
 
-
+class Transaccion(db.Model):
+    __tablename__ = "transacciones"
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
+    fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    total = db.Column(db.Numeric(10,2), nullable=False)
+    descripcion = db.Column(db.Text, nullable=True)
+    usuario = db.relationship("Usuarios", backref=db.backref("transacciones", lazy=True))
