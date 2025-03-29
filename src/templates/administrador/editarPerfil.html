@@ -16,39 +16,57 @@
         
         <!-- Formulario de edición -->
         <form method="POST" action="/ADMINISTRADOR/editar/{{ user[0] }}">
-          <!-- user[0] sería el ID del usuario si 'user' es una tupla -->
-          <!-- Si usas un objeto SQLAlchemy, podría ser user.id -->
+          <!-- Campo ID oculto -->
+          <input type="hidden" name="id" value="{{ user[0] }}">
 
-          {% set admin_selected = 'selected="selected"' if user.rol == "Admin" else '' %}
-          {% set gestor_selected = 'selected="selected"' if user.rol == "Gestor" else '' %}
-          {% set cliente_selected = 'selected="selected"' if user.rol == "Cliente" else '' %}
-          
-          <!-- Fila 1: Identificación y Rol -->
+          <!-- Fila 1: Identificación y Teléfono -->
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="form-label">Identificaci&oacute;n</label>
-              <input type="text" name="id" class="form-control" value="{{ user[0] }}" readonly>
+              <input type="text" class="form-control" value="{{ user[0] }}" readonly>
             </div>
             <div class="col-md-6">
-              <label class="form-label">Rol</label>
-              <select name="rol" class="form-select">
-                <option value="Admin" {{ admin_selected|safe }}>Admin</option>
-                <option value="Gestor" {{ gestor_selected|safe }}>Gestor</option>
-                <option value="Cliente" {{ cliente_selected|safe }}>Cliente</option>
-              </select>
-            </div>
-          </div>                     
-          
-          <!-- Fila 2: Nombres y Correo -->
+              <label class="form-label">Tel&eacute;fono</label>
+              <input 
+                type="text" 
+                name="telefono" 
+                class="form-control"
+                value="{{ user[5] }}"
+              >
+            </div>                     
+          </div>
+
+          <!-- Fila 2: Nombres y Apellidos -->
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="form-label">Nombres</label>
               <input 
                 type="text" 
                 name="nombre" 
-                class="form-control" 
-                placeholder="Ingresa tu nombre" 
-                value="{{ user.nombre }}"
+                class="form-control"
+                value="{{ user[1] }}"
+              >
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Apellidos</label>
+              <input 
+                type="text" 
+                name="apellido" 
+                class="form-control"
+                value="{{ user[2] }}"
+              >
+            </div>
+          </div>
+
+          <!-- Fila 3: Género y correo -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">G&eacute;nero</label>
+              <input 
+                type="text" 
+                name="genero" 
+                class="form-control"
+                value="{{ user[3] }}"
               >
             </div>
             <div class="col-md-6">
@@ -56,46 +74,21 @@
               <input 
                 type="email" 
                 name="email" 
-                class="form-control" 
-                placeholder="Ingresa tu correo" 
-                value="{{ user.email }}"
+                class="form-control"
+                value="{{ user[4] }}"
               >
             </div>
           </div>
 
-          <!-- Fila 3: Género y Contraseña -->
+          <!-- Fila 4: Contraseña y Confirmar Contraseña -->
           <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">G&eacute;nero</label>
-              <input 
-                type="text" 
-                name="genero" 
-                class="form-control" 
-                placeholder="Ingresa tu g&eacute;nero" 
-                value="{{ user.genero }}"
-              >
-            </div>
             <div class="col-md-6">
               <label class="form-label">Contrase&ntilde;a</label>
               <input 
                 type="password" 
                 name="contrasena" 
                 class="form-control" 
-                placeholder="Nueva contrase&ntilde;a (opcional)"
-              >
-            </div>
-          </div>
-
-          <!-- Fila 4: Teléfono y Confirmar Contraseña -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Tel&eacute;fono</label>
-              <input 
-                type="text" 
-                name="telefono" 
-                class="form-control" 
-                placeholder="Ingresa tu n&uacute;mero" 
-                value="{{ user.telefono }}"
+                placeholder="*******"
               >
             </div>
             <div class="col-md-6">
@@ -104,7 +97,7 @@
                 type="password" 
                 name="confirmar_contrasena" 
                 class="form-control" 
-                placeholder="Repite la nueva contrase&ntilde;a"
+                placeholder="*******"
               >
             </div>
           </div>

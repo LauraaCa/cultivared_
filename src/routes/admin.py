@@ -1,5 +1,7 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 from config import get_connection  
+from flask import render_template, request, session
+from models import db, Usuarios
 
 # Definir el Blueprint antes de usarlo
 main = Blueprint('admin_blueprint', __name__)
@@ -105,33 +107,37 @@ def editar(user_id):
             # Paso 2: Procesar los datos del formulario
             
             # Extraer los datos enviados desde el formulario
+            # 'identificacion' se obtiene pero no se actualiza (el ID es la PK)
             identificacion = request.form.get('id')
-            rol = request.form.get('rol')
             nombre = request.form.get('nombre')
+            apellido = request.form.get('apellido')
             email = request.form.get('email')
             genero = request.form.get('genero')
             contrasena = request.form.get('contrasena')
             confirmar_contrasena = request.form.get('confirmar_contrasena')
             telefono = request.form.get('telefono')
             
-            # Aquí puedes agregar validaciones, por ejemplo:
+            # Validación de contraseñas
             if contrasena and contrasena != confirmar_contrasena:
                 cur.close()
                 conn.close()
                 return """<script>alert("Las contraseñas no coinciden."); window.history.back();</script>"""
             
-            # Actualizar los datos del usuario en la BD
+            # Actualizar los datos del usuario en la BD (sin tocar el rol)
             cur.execute("""
                 UPDATE usuarios
-                SET rol=%s, nombre=%s, email=%s, genero=%s, telefono=%s
+                SET nombre=%s, apellido=%s, email=%s, genero=%s, telefono=%s
                 WHERE id=%s
-            """, (rol, nombre, email, genero, telefono, user_id))
+            """, (nombre, apellido, email, genero, telefono, user_id))
             
-            # Si se ingresó nueva contraseña, actualizarla (recuerda encriptarla si es necesario)
-            if contrasena.strip():
+            # Si se ingresó nueva contraseña, actualizarla (sin encriptar en este ejemplo)
+            if contrasena and contrasena.strip():
                 cur.execute("UPDATE usuarios SET contrasena=%s WHERE id=%s", (contrasena, user_id))
             
             conn.commit()
+            
+            # Actualizar el correo
+            session['email'] = email
             cur.close()
             conn.close()
             
