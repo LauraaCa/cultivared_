@@ -27,18 +27,18 @@
   <div class="filters">
     <!-- Multi-Range -->
     <div class="filter-section">
-      <h3>Multi-Range</h3>
+      <h3>Disponibilidad</h3>
       <ul>
-        <li><a href="#">Under $10</a></li>
-        <li><a href="#">$10 - $100</a></li>
-        <li><a href="#">$100 - $500</a></li>
-        <li><a href="#">Above $500</a></li>
+        <li><a href="#">En stock</a></li>
+        <li><a href="#">En produccion</a></li>
+        <li><a href="#">Envio inmediato</a></li>
+        <li><a href="#">No disponible</a></li>
       </ul>
     </div>
 
     <!-- Slider -->
     <div class="filter-section">
-      <h3>Slider</h3>
+      <h3>Rango de precios</h3>
       <input type="range" min="0" max="500" value="199" id="priceRange" />
       <div class="slider-value">
         <span id="rangeOutput">199</span> - 500
@@ -47,27 +47,47 @@
 
     <!-- Categorías -->
     <div class="filter-section">
-      <h3>Category</h3>
+      <h3>Categorias</h3>
       <ul>
         <li>
           <input type="checkbox" id="cat1" />
-          <label for="cat1">Cell Phones</label>
+          <label for="cat1">Cereales</label>
         </li>
         <li>
           <input type="checkbox" id="cat2" />
-          <label for="cat2">Computers & Tablets</label>
+          <label for="cat2">Leguminosas</label>
         </li>
         <li>
           <input type="checkbox" id="cat3" />
-          <label for="cat3">Audio</label>
+          <label for="cat3">Oleaginosas</label>
         </li>
         <li>
           <input type="checkbox" id="cat4" />
-          <label for="cat4">Appliances</label>
+          <label for="cat4">Hortalizas</label>
         </li>
         <li>
           <input type="checkbox" id="cat5" />
-          <label for="cat5">Cameras & Camcorders</label>
+          <label for="cat5">Frutales</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat6" />
+          <label for="cat5">Ornamentales</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat7" />
+          <label for="cat5">Raíces y tubérculos</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat8" />
+          <label for="cat5">Aromaticas</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat9" />
+          <label for="cat5">Pastos</label>
+        </li>
+        <li>
+          <input type="checkbox" id="cat10" />
+          <label for="cat5">Otros</label>
         </li>
         <!-- Agrega más categorías según necesites -->
       </ul>
@@ -78,7 +98,7 @@
   <div class="product-cards-container">
     <div class="row justify-content-center">
       {% for p in producto %}
-        <div class="col-md-4 col-sm-6 mb-4">
+        <div class="col-md-3 col-sm-6 mb-4">
           <div class="card h-100">
             {% if p[3] %}
               <img src="{{ p[3] }}" class="card-img-top" alt="Imagen de {{ p[1] }}">

@@ -1,6 +1,6 @@
 /* Estilos para el body */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Baloo 2';
     margin: 0;
     padding: 0;
     background-color: #f8f5f2;
@@ -16,16 +16,20 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 100%;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
 .navbar .logo {
     font-size: 24px;
+    align-items: center;
     font-weight: bold;
     color: #BC8034; /* Amarillo dorado */
 }
 
 .navbar .li {
+    align-items: center;
     font-size: 24px;
     font-weight: bold;
     color: #fff; /* Blanco */
@@ -33,19 +37,20 @@ body {
 
 .navbar .nav-links {
     list-style: none;
+    display: flex;
+    align-items: center;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
 }
 
 .navbar .nav-links li {
-    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .navbar .nav-links a {
     text-decoration: none;
     color: #fff; /* Blanco */
+    padding: 5px 0;
 }
 
 .navbar .nav-links a:hover {
@@ -53,7 +58,7 @@ body {
 }
 
 .navbar .dropdown-menu {
-    background-color: #B22222; /* Rojo oscuro */
+    background-color: #5E0B15; /* Rojo oscuro */
 }
 
 .navbar .dropdown-menu a:hover {
