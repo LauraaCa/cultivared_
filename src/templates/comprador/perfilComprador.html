@@ -1,0 +1,78 @@
+{% extends 'comprador/baseComprador.html' %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/perfilComprador.css') }}">
+</head>
+<body>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar">
+                <div class="text-center">
+                    <img src="https://via.placeholder.com/80" class="profile-img" alt="Foto de perfil">
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a href="#" class="nav-link active">Perfil</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Direcciones</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Pedidos</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Tarjetas de crédito</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Autenticación</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Suscripciones</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Favoritos</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link logout">Salir</a></li>
+                </ul>
+            </div>
+
+            <!-- Contenido del perfil -->
+            <div class="col-md-9 profile-content">
+                <h2 class="profile-title">Perfil</h2>
+                <div class="profile-card">
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Nombre</strong><br>
+                            <span class="text-muted">{{ user[1] }}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Apellido</strong><br>
+                            <span class="text-muted">{{ user[2] }}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Cédula de ciudadanía</strong><br>
+                            <span class="text-muted">{{ user[0]}}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Género</strong><br>
+                            <span class="text-muted">{{ user[3]}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Email</strong><br>
+                            <span class="text-muted">{{ user[4]}}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Teléfono</strong><br>
+                            <span class="text-muted">{{ user[5]}}</span>
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-success">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}
