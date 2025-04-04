@@ -8,11 +8,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GESTOR</title>
-    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
-    <link rel="stylesheet" href="/src/static/css/gestor.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gestor.css') }}">
 </head>
+{% block customCSS %}
+<link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
+{% endblock %}
+
 <body>
     <nav class="navbar sticky-top">
         <div class="container">
@@ -56,10 +59,9 @@
             <tbody>
                 {% for user in usuarios %}
                 <tr>        
-                    <td>{{ user[0] }}</td>
                     <td>
                         <a href="{{ url_for('gestor_blueprint.perfil_usuario', user_id=user[0]) }}">
-                            {{ user[1] }}
+                            {{ user[0] }}
                         </a>
                     </td>
                     <td>{{ user[1] }}</td>
@@ -70,6 +72,9 @@
                     <td class="role">{{ user[6] }}</td>  <!-- Añadimos la clase "role" para el filtro JS -->
                     <td>
                         <button class="btn btn-danger">Eliminar</button>
+                        <button class="btn btn-">Editar</button>
+            
+                        
                     </td>
                 </tr>
                 {% endfor %}
