@@ -1,0 +1,45 @@
+{% extends 'vendedor/vendedorBase.html' %}
+{% block body %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
+{% endblock %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form action="/MisProductos">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Código</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in produ %}
+                                <tr>
+                                    <td>{{ producto[0] }}</td>  <!-- id -->
+                                    <td>{{ producto[1] }}</td>  <!-- nombre -->
+                                    <td>{{ producto[2] }}</td>  <!-- descripcion -->
+                                    <td>{{ producto[4] }}</td>  <!-- cantidad -->
+                                    <td>${{ producto[5] }}</td>  <!-- precio -->
+                                    <td>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                    <a href="/Gestor" class="btn btn-secondary btn-lg">Atrás</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

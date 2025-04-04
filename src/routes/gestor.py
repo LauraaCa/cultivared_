@@ -60,14 +60,16 @@ def obtener_usuario_por_id(user_id):
 
 @main.route('/GESTOR/perfil_usuario/<int:user_id>')
 def perfil_usuario(user_id):
-    # Aquí debes obtener los datos del usuario desde la base de datos
-    user = obtener_usuario_por_id(user_id)  # Función que debes definir
-    print(f"Usuario encontrado: {user}")
-    if not user:
-        return "Usuario no encontrado", 404
-    
-    return render_template('gestor/perfil_usuario.html', user=user)
+    conn = get_connection()
+    cur = conn.cursor()
 
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template('gestor/perfil_usuario.html', user=user)
 
 @main.route('/dashboard')
 def dashboard():
@@ -116,3 +118,22 @@ def dashboard():
         productos_mas_vendidos=productos_mas_vendidos,
         total_ingresos=total_ingresos
     )
+
+
+@main.route('/inventario_usuario/<int:user_id>')
+def inventario_usuario(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Traer productos registrados por ese usuario
+    cur.execute('SELECT * FROM productos WHERE id_vendedor = %s', (user_id,))
+    productos = cur.fetchall()
+
+    # Traer info del usuario (opcional)
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template('gestor/inventarioUsuario.html', produ=productos, user=user)
