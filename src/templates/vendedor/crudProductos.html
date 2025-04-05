@@ -31,7 +31,8 @@
                                     <td>{{ producto[4] }}</td>  <!-- cantidad -->
                                     <td>${{ producto[5] }}</td>  <!-- precio -->
                                     <td>
-                                   
+                                        <img src="{{ url_for('imagen_producto', producto_id=producto[0]) }}" alt="Imagen del producto" width="200">
+
                                     </td>
                                     <td>
                                         <a href="/editarProducto/{{ producto[0] }}" title="Editar" class="btn btn-primary btn-sm">Editar</a>

@@ -1,5 +1,7 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 from config import get_connection  # Importamos la conexión a PostgreSQL
+from flask import send_file
+import io
 
 main = Blueprint('vendedor_blueprint', __name__)
 #
@@ -45,6 +47,9 @@ def form():
         return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
     if request.method == 'POST':
+        imagen_file = request.files['imagen']
+        imagen_bytes = imagen_file.read()
+
         ide = request.form['idProducto']
         nombre = request.form['nombreProducto']
         descripcion = request.form['descripcionProducto']
@@ -52,15 +57,16 @@ def form():
         cantidad = request.form['unidades']
         precio = request.form['precio']
         idVendedor = session.get('id')
+        imagen = imagen_bytes
 
         conn = get_connection()
         if conn:
             try:
-                cur = conn.cursor()
+                cur = conn.cursor()         
                 cur.execute("""
-                    INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor))
+                    INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor, imagen)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor, imagen))
 
                 conn.commit()
                 cur.close()
@@ -74,6 +80,19 @@ def form():
 
     return redirect(url_for('vendedor'))
 
+@main.route('/imagen_producto/<int:producto_id>')
+def imagen_producto(producto_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT imagen FROM productos WHERE id = %s", (producto_id,))
+    imagen = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if imagen and imagen[0]:
+        return send_file(io.BytesIO(imagen[0]), mimetype='image/jpeg')  # O image/png si usas PNG
+    else:
+        return "", 204  # Sin contenido
 
 @main.route('/MisProductos')
 def mis_productos():
