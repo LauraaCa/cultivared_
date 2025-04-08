@@ -47,38 +47,42 @@ def form():
         return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
     if request.method == 'POST':
-        imagen_file = request.files['imagen']
-        imagen_bytes = imagen_file.read()
+        try:
+            imagen_file = request.files.get('imagen')
+            if not imagen_file:
+                raise ValueError("Debes subir una imagen.")
 
-        ide = request.form['idProducto']
-        nombre = request.form['nombreProducto']
-        descripcion = request.form['descripcionProducto']
-        categoria = request.form['categoria']
-        cantidad = request.form['unidades']
-        precio = request.form['precio']
-        idVendedor = session.get('id')
-        imagen = imagen_bytes
+            imagen_bytes = imagen_file.read()
 
-        conn = get_connection()
-        if conn:
-            try:
-                cur = conn.cursor()         
-                cur.execute("""
-                    INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor, imagen)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor, imagen))
+            ide = request.form.get('idProducto')
+            nombre = request.form.get('nombreProducto')
+            descripcion = request.form.get('descripcionProducto')
+            categoria = request.form.get('categoria')
+            cantidad = request.form.get('unidades')
+            precio = request.form.get('precio')
+            idVendedor = session.get('id')
 
-                conn.commit()
-                cur.close()
-                conn.close()
+            if not all([ide, nombre, descripcion, categoria, cantidad, precio]):
+                raise ValueError("Todos los campos son obligatorios.")
 
-                return "<script>alert('Producto registrado correctamente'); window.location.href = '/VENDEDOR';</script>"
-            except Exception as e:
-                return f"<script>alert('Error al registrar el producto: {str(e)}'); window.location.href = '/VENDEDOR/registroProductos';</script>"
-        else:
-            return "<script>alert('Error: No se pudo conectar a la base de datos.'); window.location.href = '/VENDEDOR/registroProductos';</script>"
+            conn = get_connection()
+            cur = conn.cursor()
 
-    return redirect(url_for('vendedor'))
+            cur.execute("""
+                INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor, imagen)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor, imagen_bytes))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return redirect(url_for('vendedor_blueprint.mis_productos'))
+
+        except Exception as e:
+            return f"<script>alert('Error al registrar el producto: {str(e)}'); window.location.href = '/VENDEDOR/RegistroProductos';</script>"
+
+    return redirect(url_for('vendedor_blueprint.registro_productos'))
 
 @main.route('/imagen_producto/<int:producto_id>')
 def imagen_producto(producto_id):

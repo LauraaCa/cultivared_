@@ -1,7 +1,5 @@
 {% extends 'vendedor/vendedorBase.html' %}
 {% block body %}
-    
-
 
 <section class="vh-100 gradient-custom">
     <div class="container py-5 h-100">
@@ -11,11 +9,11 @@
                     <div class="card-body p-4 p-md-5">
                         <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registra tus productos:</h3>
 
-                        <form action="/VENDEDOR/formularioProductos" method="POST" enctype="multipart/form-data">
+                        <form action="{{ url_for('vendedor_blueprint.form') }}" method="POST" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label for="idProducto" class="form-label">Código Producto</label>
-                                    <input type="text" name="idProducto" class="form-control" placeholder="Ej: 123 " title="Código Producto" required>
+                                    <input type="text" name="idProducto" class="form-control" placeholder="Ej: 123" title="Código Producto" required>
                                 </div>
 
                                 <div class="col-md-6 mb-4">
@@ -56,7 +54,6 @@
                                 </div>
                             </div>
 
-                            <!-- Descripción del producto -->
                             <div class="mb-4">
                                 <label for="descripcionProducto" class="form-label">Descripción del Producto:</label>
                                 <textarea name="descripcionProducto" class="form-control" rows="3" placeholder="Ej: Yuca fresca cultivada de manera orgánica..." required></textarea>
@@ -69,9 +66,10 @@
 
                             <div class="mt-4 pt-2">
                                 <button type="submit" class="btn btn-primary btn-lg" title="Crear Producto">Crear Producto</button>
-                                <a href="/Vendedor" class="btn btn-secondary btn-lg" title="Atrás">Atrás</a>
+                                <a href="{{ url_for('vendedor_blueprint.vendedor') }}" class="btn btn-secondary btn-lg" title="Atrás">Atrás</a>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
