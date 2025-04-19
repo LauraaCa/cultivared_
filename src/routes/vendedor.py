@@ -121,12 +121,30 @@ def mis_productos():
 
 @main.route('/HistorialPedidos')
 def historial_pedidos():
-    return render_template('/vendedor/historialPedidos.html')
+    if 'id' not in session:
+        return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (session['id'],))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    return render_template('/vendedor/historialPedidos.html', user=user)
 
 
 @main.route('/ResumenVentas')
 def resumen_ventas():
-    return render_template('/vendedor/resumenVentas.html')
+    if 'id' not in session:
+        return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (session['id'],))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    return render_template('/vendedor/resumenVentas.html',user=user)
 
 
 @main.route('/MiPerfil')
@@ -141,4 +159,4 @@ def mi_perfil():
     cur.close()
     conn.close()
 
-    return render_template('/vendedor/perfilVendedor.html', user=user)
+    return render_template('/vendedor/perfil.html', user=user)

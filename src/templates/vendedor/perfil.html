@@ -1,0 +1,41 @@
+{% extends 'vendedor/vendedorBase.html' %}
+{% block body %}
+
+{% block customCSS %}
+{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vendedorPerfil.css') }}">
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Perfil del Vendedor</h2>
+      <p>Información personal de tu cuenta en CultivaRed</p>
+    </div>
+
+    <div class="profile-info">
+      <div class="info-item">
+        <label>Identificacion</label>
+        <span>{{user[0]}}</span>
+      </div>
+      <div class="info-item">
+        <label>Nombre Completo</label>
+        <span>{{user[1]}} {{user[2]}}</span>
+      </div>
+      <div class="info-item">
+        <label>Email</label>
+        <span>{{user[4]}}</span>
+      </div>
+      <div class="info-item">
+        <label>Celular</label>
+        <span>{{user[5]}}</span>
+      </div>
+      <div class="info-item">
+        <label>Rol</label>
+        <span>{{user[6]}}</span>
+      </div>
+      <div class="button">
+        <a href="#" title="Editar" class="btn btn-primary btn-sm">Editar</a>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
