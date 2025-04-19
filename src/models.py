@@ -16,14 +16,15 @@ class Usuarios(db.Model):
 
 class Producto(db.Model):
     __tablename__ = "productos"
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)  
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(255), nullable=False)
     descripcion = db.Column(db.Text, nullable=False)
     categoria = db.Column(db.String(250), nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)  
-    precio = db.Column(db.Numeric(10, 2), nullable=False) 
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio = db.Column(db.Numeric(10, 2), nullable=False)
     id_vendedor = db.Column(db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
-    vendedor = db.relationship("Usuarios", backref=db.backref("productos", lazy=True))
+    imagen = db.Column(db.LargeBinary, nullable=True)
+    vendedor = db.relationship("Usuarios", backref=db.backref("productos", lazy=True)) 
 
 class Transaccion(db.Model):
     __tablename__ = "transacciones"
