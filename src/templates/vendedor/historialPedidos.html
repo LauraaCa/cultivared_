@@ -1,0 +1,52 @@
+{% extends 'vendedor/vendedorBase.html' %}
+{% block body %}
+
+{% block customCSS %}
+{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vendedorHistorialPedidos.css') }}">
+
+<body>
+  <div class="container">
+    <h1>Historial de Pedidos</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID Pedido</th>
+          <th>Cliente</th>
+          <th>Fecha</th>
+          <th>Productos</th>
+          <th>Total</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#001</td>
+          <td>Juan Pérez</td>
+          <td>2025-04-18</td>
+          <td>Tomate, Lechuga</td>
+          <td>$25.000</td>
+          <td><span class="status entregado">Entregado</span></td>
+        </tr>
+        <tr>
+          <td>#002</td>
+          <td>Ana Gómez</td>
+          <td>2025-04-17</td>
+          <td>Zanahoria, Papa</td>
+          <td>$18.000</td>
+          <td><span class="status pendiente">Pendiente</span></td>
+        </tr>
+        <tr>
+          <td>#003</td>
+          <td>Carlos Ruiz</td>
+          <td>2025-04-15</td>
+          <td>Cebolla, Maíz</td>
+          <td>$20.000</td>
+          <td><span class="status cancelado">Cancelado</span></td>
+        </tr>
+      </tbody>
+      <a href="/VENDEDOR" class="btn btn-secondary btn-lg">Atrás</a>
+    </table>
+  </div>
+</body>
+{% endblock %}

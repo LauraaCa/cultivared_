@@ -41,9 +41,6 @@
                                 <p><strong>Teléfono:</strong> {{ user[5] }}</p>
                                 <p><strong>Rol:</strong> {{ user[6] }}</p>
                             </div>
-                            <div class="text-center">
-                                <a href="/CULTIVARED/logout" class="btn btn-danger">Cerrar sesión</a>
-                            </div>
                         </div>    
                     </div>
     
@@ -55,8 +52,10 @@
                         <div class="card-body">
                             <ul class="menu-list">
                                 <!-- aqui vienen estadisticas, inventario, graficos -->
-                                <li><a href="#">Inventario</a></li>
-                                <li><a href="#">Reportes</a></li>
+                                <li><a href="{{ url_for('gestor_blueprint.inventario_usuario', user_id=user[0]) }}">Ver Inventario</a></li>
+                                <li><a href="#">Reportes:</a></li>
+                                <li><a href="#">Historial de pedidos</a></li>
+                                <li><a href="#">Resumen de ventas</a></li>
                                 <li><a href="#">Graficos</a></li>
                             </ul>
                         </div>    
