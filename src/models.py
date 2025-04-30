@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -34,3 +35,27 @@ class Transaccion(db.Model):
     total = db.Column(db.Numeric(10,2), nullable=False)
     descripcion = db.Column(db.Text, nullable=True)
     usuario = db.relationship("Usuarios", backref=db.backref("transacciones", lazy=True))
+    
+class Carrito(db.Model):
+    __tablename__ = "carrito"
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    estado = db.Column(db.String, default='open')
+    creado = db.Column(db.DateTime, default=datetime.utcnow)
+    actualizado = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    items = db.relationship('ItemsCarrito', back_populates='carrito', cascade='all, delete-orphan')
+
+class ItemsCarrito(db.Model):
+    __tablename__ = "itemsCarrito"
+    id = db.Column(db.Integer, primary_key=True)
+    carrito_id = db.Column(db.Integer, db.ForeignKey('carrito.id'), nullable=False)
+    producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False) 
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio = db.Column(db.Numeric(10,2), nullable=False)
+    agregado = db.Column(db.DateTime, default=datetime.utcnow)
+
+    carrito = db.relationship('Carrito', back_populates='items')
+    producto = db.relationship('Producto')
+    __table_args__ = (db.UniqueConstraint('carrito_id', 'producto_id', name='_cart_prod_uc'),)
+

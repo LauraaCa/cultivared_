@@ -26,7 +26,7 @@ def comprador():
     
     return """<script> alert("Por favor, primero inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
-@main.route('/perfil')
+@main.route('/PERFIL')
 def perfil():
     if 'logueado' in session and session['logueado']:
         conn = get_connection()
@@ -41,6 +41,27 @@ def perfil():
 
         if user:
             return render_template('comprador/perfilComprador.html', user=user)
+        else:
+            return """<script> alert("Usuario no encontrado."); window.location.href = "/CULTIVARED/login"; </script>"""
+    
+    return """<script> alert("Por favor, primero inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+
+
+@main.route('/CARRITO')
+def carrito():
+    if 'logueado' in session and session['logueado']:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # Obtener datos del usuario autenticado
+        cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
+        user = cur.fetchone()
+        
+        cur.close()
+        conn.close()
+
+        if user:
+            return render_template('comprador/carritoComprador.html', user=user)
         else:
             return """<script> alert("Usuario no encontrado."); window.location.href = "/CULTIVARED/login"; </script>"""
     
