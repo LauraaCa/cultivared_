@@ -35,5 +35,3 @@ if conn:
         db_version = cursor.fetchone()
         print("Conectado a:", db_version)
     conn.close()
-
-

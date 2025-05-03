@@ -31,6 +31,9 @@
                                     <td>{{ producto[4] }}</td>  <!-- cantidad -->
                                     <td>${{ producto[5] }}</td>  <!-- precio -->
                                     <td>
+                                        <img src="{{ url_for('vendedor_blueprint.imagen_producto', producto_id=producto[0]) }}"
+                                        alt="Imagen del producto" width="200" height="200"
+                                        onerror="this.onerror=null; this.src='/static/img/default.png';">
                                    
                                     </td>
                                     <td>
@@ -42,7 +45,9 @@
                         </tbody>
                         
                     </table>
-                    <a href="/Vendedor" class="btn btn-secondary btn-lg">Atrás</a>
+                    <a href="/VENDEDOR/RegistroProductos" class="btn btn-secondary btn-lg" title="Agregar">Agregar Producto</a>
+                    <a href="/VENDEDOR" class="btn btn-secondary btn-lg">Atrás</a>
+
                 </div>
             </form>
         </div>

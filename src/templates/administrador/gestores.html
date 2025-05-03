@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+{% extends 'administrador/baseAdmin.html' %}
+{% block body %}
+
+<!-- Enlace al CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
+  <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">GESTORES</h1>
+
+  <!-- Contenedor -->
+  <div class="table-container p-4 w-75 mt-4"> 
+      <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+          <table class="table table-bordered text-center table-striped">
+              <thead class="table-dark">
+                  <tr>
+                      <th>Cédula</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Email</th>
+                      <th>Teléfono</th>
+                      <th>Rol</th>
+                      <th>Operaciones</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for gestor in gestores %}
+                  <tr>
+                      <td>{{ gestor.id }}</td>
+                      <td>{{ gestor.nombre }}</td>
+                      <td>{{ gestor.apellido }}</td>
+                      <td>{{ gestor.email }}</td>
+                      <td>{{ gestor.telefono }}</td>
+                      <td>{{ gestor.rol }}</td>
+                      <td>
+                          <a href="{{ url_for('admin_blueprint.editar_gestor', id=gestor.id) }}" class="btn btn-warning">
+                              <img src="{{ url_for('static', filename='img/lapiz.png') }}" alt="Editar" class="icono-btn">
+                              <span class="ms-2">Editar</span>
+                          </a>
+                          <form action="{{ url_for('admin_blueprint.eliminar_gestor', id=gestor.id) }}" method="POST" style="display:inline;">
+                              <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que quieres eliminar este gestor?')">
+                                  <img src="{{ url_for('static', filename='img/basura.png') }}" alt="Eliminar" class="icono-btn">
+                                  <span class="ms-2">Eliminar</span>
+                              </button>
+                          </form>
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  </div>
+
+  <div class="text-center mt-5">
+      <a href="{{ url_for('admin_blueprint.registrar_gestor') }}" class="btn btn-primary">Registrar nuevo gestor</a>
+      <a href="{{ url_for('admin_blueprint.admin') }}" class="btn btn-secondary">Volver al panel</a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,82 +1,73 @@
+<!DOCTYPE html>
 {% extends 'vendedor/vendedorBase.html' %}
 {% block body %}
-    
+<link rel="stylesheet" href="{{ url_for('static', filename='css/registroProducto.css') }}">
 
+<section class="registro-section">
+  <div class="registro-card">
+    <h2 class="titulo">🧺 Registro de Producto</h2>
 
-<section class="vh-100 gradient-custom">
-    <div class="container py-5 h-100">
-        <div class="row justify-content-center align-items-center h-100">
-            <div class="col-12 col-lg-9 col-xl-7">
-                <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
-                    <div class="card-body p-4 p-md-5">
-                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registra tus productos:</h3>
-
-                        <form action="/VENDEDOR/formularioProductos" method="POST" enctype="multipart/form-data">
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <label for="idProducto" class="form-label">Código Producto</label>
-                                    <input type="text" name="idProducto" class="form-control" placeholder="Ej: 123 " title="Código Producto" required>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <label for="nombreProducto" class="form-label">Nombre Producto</label>
-                                    <input type="text" name="nombreProducto" class="form-control" placeholder="Ej: Yuca" title="Nombre del producto" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <label for="categoria">Seleccione una categoría de productos:</label>
-                                    <select id="categoria" name="categoria" class="form-select" title="Categoría del producto" required>
-                                        <option value="none">Elige la categoría</option>
-                                        <option value="granos_cereales">Granos y Cereales</option>
-                                        <option value="frutas">Frutas</option>
-                                        <option value="verduras">Verduras</option>
-                                        <option value="hortalizas">Hortalizas de raíz</option>
-                                        <option value="legumbres">Legumbres</option>
-                                        <option value="frutos">Frutos secos</option>
-                                        <option value="hierbas">Hierbas aromáticas</option>
-                                        <option value="lacteos">Productos lácteos</option>
-                                        <option value="carnes">Productos cárnicos</option>
-                                        <option value="avicolas">Productos avícolas</option>
-                                        <option value="pesca">Productos de pesca</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <label for="unidades" class="form-label">Cantidad (Lbs)</label>
-                                    <input type="number" name="unidades" class="form-control" title="Unidades" placeholder="Ej: 5">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <label for="precio" class="form-label">Precio por libra (500gr)</label>
-                                    <input type="number" name="precio" class="form-control" title="Precio" placeholder="Ej: 2000" required>
-                                </div>
-                            </div>
-
-                            <!-- Descripción del producto -->
-                            <div class="mb-4">
-                                <label for="descripcionProducto" class="form-label">Descripción del Producto:</label>
-                                <textarea name="descripcionProducto" class="form-control" rows="3" placeholder="Ej: Yuca fresca cultivada de manera orgánica..." required></textarea>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="imagen" class="form-label">Imagen:</label>
-                                <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*" required>
-                            </div>
-
-                            <div class="mt-4 pt-2">
-                                <button type="submit" class="btn btn-primary btn-lg" title="Crear Producto">Crear Producto</button>
-                                <a href="/Vendedor" class="btn btn-secondary btn-lg" title="Atrás">Atrás</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <form action="{{ url_for('vendedor_blueprint.form') }}" method="POST" enctype="multipart/form-data">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="idProducto">Código Producto</label>
+          <input type="text" name="idProducto" placeholder="Ej: 123" required>
         </div>
-    </div>
-</section>
 
+        <div class="form-group">
+          <label for="nombreProducto">Nombre Producto</label>
+          <input type="text" name="nombreProducto" placeholder="Ej: Yuca" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <select name="categoria" required>
+            <option disabled selected>Elige la categoría</option>
+            <option value="granos_cereales">Granos y Cereales</option>
+            <option value="frutas">Frutas</option>
+            <option value="verduras">Verduras</option>
+            <option value="hortalizas">Hortalizas de raíz</option>
+            <option value="legumbres">Legumbres</option>
+            <option value="frutos">Frutos secos</option>
+            <option value="hierbas">Hierbas aromáticas</option>
+            <option value="lacteos">Productos lácteos</option>
+            <option value="carnes">Productos cárnicos</option>
+            <option value="avicolas">Productos avícolas</option>
+            <option value="pesca">Productos de pesca</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="unidades">Cantidad (Lbs)</label>
+          <input type="number" name="unidades" placeholder="Ej: 5">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="precio">Precio por libra</label>
+          <input type="number" name="precio" placeholder="Ej: 2000" required>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="descripcionProducto">Descripción</label>
+        <textarea name="descripcionProducto" rows="3" placeholder="Ej: Yuca fresca cultivada de manera orgánica..." required></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="imagen">Imagen</label>
+        <input type="file" name="imagen" accept="image/*" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">Crear Producto</button>
+        <a href="{{ url_for('vendedor_blueprint.vendedor') }}" class="btn-back">Atrás</a>
+      </div>
+    </form>
+  </div>
+</section>
 {% endblock %}

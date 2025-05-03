@@ -1,8 +1,10 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 from config import get_connection  # Importamos la conexión a PostgreSQL
+from flask import send_file
+import io
 
 main = Blueprint('vendedor_blueprint', __name__)
-
+#
 @main.route('/')
 def vendedor():
     if 'logueado' not in session or not session['logueado']:
@@ -45,35 +47,56 @@ def form():
         return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
     if request.method == 'POST':
-        ide = request.form['idProducto']
-        nombre = request.form['nombreProducto']
-        descripcion = request.form['descripcionProducto']
-        categoria = request.form['categoria']
-        cantidad = request.form['unidades']
-        precio = request.form['precio']
-        idVendedor = session.get('id')
+        try:
+            imagen_file = request.files.get('imagen')
+            if not imagen_file:
+                raise ValueError("Debes subir una imagen.")
 
-        conn = get_connection()
-        if conn:
-            try:
-                cur = conn.cursor()
-                cur.execute("""
-                    INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor))
+            imagen_bytes = imagen_file.read()
 
-                conn.commit()
-                cur.close()
-                conn.close()
+            ide = request.form.get('idProducto')
+            nombre = request.form.get('nombreProducto')
+            descripcion = request.form.get('descripcionProducto')
+            categoria = request.form.get('categoria')
+            cantidad = request.form.get('unidades')
+            precio = request.form.get('precio')
+            idVendedor = session.get('id')
 
-                return "<script>alert('Producto registrado correctamente'); window.location.href = '/VENDEDOR';</script>"
-            except Exception as e:
-                return f"<script>alert('Error al registrar el producto: {str(e)}'); window.location.href = '/VENDEDOR/registroProductos';</script>"
-        else:
-            return "<script>alert('Error: No se pudo conectar a la base de datos.'); window.location.href = '/VENDEDOR/registroProductos';</script>"
+            if not all([ide, nombre, descripcion, categoria, cantidad, precio]):
+                raise ValueError("Todos los campos son obligatorios.")
 
-    return redirect(url_for('vendedor'))
+            conn = get_connection()
+            cur = conn.cursor()
 
+            cur.execute("""
+                INSERT INTO productos (id, nombre, descripcion, categoria, cantidad, precio, id_vendedor, imagen)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ide, nombre, descripcion, categoria, cantidad, precio, idVendedor, imagen_bytes))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return redirect(url_for('vendedor_blueprint.mis_productos'))
+
+        except Exception as e:
+            return f"<script>alert('Error al registrar el producto: {str(e)}'); window.location.href = '/VENDEDOR/RegistroProductos';</script>"
+
+    return redirect(url_for('vendedor_blueprint.registro_productos'))
+
+@main.route('/imagen_producto/<int:producto_id>')
+def imagen_producto(producto_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT imagen FROM productos WHERE id = %s", (producto_id,))
+    imagen = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if imagen and imagen[0]:
+        return send_file(io.BytesIO(imagen[0]), mimetype='image/jpeg')  # O image/png si usas PNG
+    else:
+        return "", 204  # Sin contenido
 
 @main.route('/MisProductos')
 def mis_productos():
@@ -98,12 +121,30 @@ def mis_productos():
 
 @main.route('/HistorialPedidos')
 def historial_pedidos():
-    return render_template('/vendedor/historialPedidos.html')
+    if 'id' not in session:
+        return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (session['id'],))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    return render_template('/vendedor/historialPedidos.html', user=user)
 
 
 @main.route('/ResumenVentas')
 def resumen_ventas():
-    return render_template('/vendedor/resumenVentas.html')
+    if 'id' not in session:
+        return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (session['id'],))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    return render_template('/vendedor/resumenVentas.html',user=user)
 
 
 @main.route('/MiPerfil')
@@ -118,4 +159,4 @@ def mi_perfil():
     cur.close()
     conn.close()
 
-    return render_template('/vendedor/perfilVendedor.html', user=user)
+    return render_template('/vendedor/perfil.html', user=user)
