@@ -1,9 +1,85 @@
 <!DOCTYPE html>
-
 {% extends 'administrador/baseAdmin.html' %}
 {% block body %}
-<div class="container mt-5">
-  <h2>Vista de usuarios</h2>
-  <!-- Aquí va todo lo relacionado con usuarios -->
+
+<!-- Enlace al CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
+  <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">USUARIOS</h1>
+
+  <!-- Filtro para seleccionar tipo de usuario -->
+  <div class="mb-3 text-center">
+    <label for="filtroRol" class="form-label"><strong>Filtrar por categoría:</strong></label>
+    <select id="filtroRol" class="filtro-personalizado">
+        <option value="Todos">Todos</option>
+        <option value="Vendedor">Vendedor</option>
+        <option value="Comprador">Comprador</option>
+    </select>
+   </div>
+
+  <!-- Contenedor de la tabla -->
+  <div class="table-container p-4 w-80 mt-4"> 
+      <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+          <table class="table table-bordered text-center table-striped">
+              <thead class="table-dark">
+                  <tr>
+                      <th>Cédula</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Email</th>
+                      <th>Teléfono</th>
+                      <th>Rol</th>
+                      <th>Operaciones</th>
+                  </tr>
+              </thead>
+              <tbody id="tablaUsuarios">
+                  {% for usuario in usuarios %}
+                  <tr class="usuario-row" data-rol="{{ usuario.rol }}">
+                      <td>{{ usuario.id }}</td>
+                      <td>{{ usuario.nombre }}</td>
+                      <td>{{ usuario.apellido }}</td>
+                      <td>{{ usuario.email }}</td>
+                      <td>{{ usuario.telefono }}</td>
+                      <td>{{ usuario.rol }}</td>
+                      <td>
+                        <a href="{{ url_for('admin_blueprint.editar_usuario', id=usuario.id) }}" class="btn btn-warning">
+                            <img src="{{ url_for('static', filename='img/lapiz.png') }}" alt="Editar" class="icono-btn">
+                            <span class="ms-2">Editar</span>
+                        </a>
+                        <form action="{{ url_for('admin_blueprint.eliminar_usuario', id=usuario.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')">
+                                <img src="{{ url_for('static', filename='img/basura.png') }}" alt="Eliminar" class="icono-btn">
+                                <span class="ms-2">Eliminar</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+      <a href="{{ url_for('admin_blueprint.registrar_usuario') }}" class="btn btn-primary">Registrar nuevo usuario</a>
+      <a href="{{ url_for('admin_blueprint.admin') }}" class="btn btn-secondary">Volver al panel</a>
+  </div>
 </div>
+
+<!-- Script para filtro dinámico de usuarios -->
+<script>
+document.getElementById("filtroRol").addEventListener("change", function() {
+    var filtro = this.value;
+    var filas = document.querySelectorAll(".usuario-row");
+
+    filas.forEach(function(fila) {
+        if (filtro === "Todos" || fila.getAttribute("data-rol") === filtro) {
+            fila.style.display = "";
+        } else {
+            fila.style.display = "none";
+        }
+    });
+});
+</script>
 {% endblock %}

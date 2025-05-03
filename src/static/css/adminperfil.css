@@ -5,6 +5,29 @@ body {
   font-family: 'Baloo 2', cursive;;
 }
 
+/* Permitir desplazamiento vertical y horizontal */
+/* Permitir desplazamiento horizontal y vertical */
+/* Habilitar desplazamiento solo si es necesario */
+body {
+  overflow-x: auto; /* Scroll horizontal solo si es necesario */
+  overflow-y: auto; /* Scroll vertical solo si es necesario */
+  min-width: 100vw; /* Evita cortes en contenido */
+}
+
+/* Evitar que el navbar se desplace */
+.navbar {
+  position: fixed;
+  width: 100%;
+  z-index: 1000; /* Asegura que se mantenga en la parte superior */
+}
+
+/* Ajustar contenedor de la tabla */
+.table-container {
+  overflow-x: auto; /* Permite desplazamiento horizontal en la tabla */
+  overflow-y: auto; /* Permite desplazamiento vertical en la tabla */
+  max-height: 500px; /* Control de altura */
+}
+
 .container-perfil  {
   display: flex;
   justify-content: center;
@@ -20,6 +43,37 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Alinear correctamente el menú de navegación */
+.navbar .container {
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos de forma equilibrada */
+  align-items: center;
+}
+
+/* Evitar que los elementos dentro del menú se desplacen */
+.nav-links {
+  display: flex;
+  gap: 20px; /* Añade espacio entre los enlaces */
+  align-items: center;
+}
+
+/* Ajustar el espacio del dropdown de usuario */
+.nav-item.dropdown {
+  position: relative;
+}
+
+/* Ajustar la posición del menú desplegable */
+.dropdown-menu {
+  right: 0; /* Asegura que no se salga del contenedor */
+  left: auto; /* Evita desplazamientos forzados */
+  min-width: 200px; /* Evita que se vea muy estrecho */
+  margin-right: 10px; /* Ajusta la distancia del borde derecho */
+}
+/* Separar las opciones dentro del dropdown */
+.dropdown-item {
+  padding: 10px 15px;
 }
 
 .profile-card {
@@ -185,4 +239,192 @@ body {
    hue-rotate(345deg) 
    brightness(89%) 
    contrast(87%);
+}
+
+/* Íconos dentro de los botones */
+.icono-btn {
+  width: 18px; /* Tamaño adaptable */
+  height: 18px;
+  display: inline-block;
+}
+
+#panel-title {
+  margin-top: 80px;
+}
+
+.table-wrapper {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: 500px !important;
+}
+
+/* Contenedor de la tabla con fondo beige */
+.table-container {
+  background-color: #D9CAB3; /* Beige */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-top: 40px; /* Asegura espacio entre el título y la tabla */
+}
+
+/* Hacer que la tabla sea desplazable sin afectar el título */
+.table-wrapper {
+  max-height: 500px; /* Permite más espacio para la tabla */
+  overflow-y: auto; /* Desplazamiento vertical */
+}
+
+.table {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Ajuste de la tabla para que no desborde */
+.table {
+  overflow-y: auto;
+}
+
+/* Centrar los títulos de la tabla */
+.table th {
+  text-align: center; /* Centra los títulos */
+  font-weight: bold; /* Negrita para resaltar */
+}
+
+/* Alinear los datos de la tabla a la izquierda */
+.table td {
+  text-align: left; /* Datos alineados a la izquierda */
+  padding: 10px; /* Espacio para mejorar visualización */
+}
+
+/* Cambiar el color del texto en los títulos */
+.table thead th {
+  color: #D9CAB3 !important; /* Café oscuro */
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #e0dddd;
+}
+
+.btn {
+  background-color: #8C7A6B; /* Marrón elegante */
+  color: white; /* Texto blanco para contraste */
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+.btn:hover {
+  background-color: #7B6A5D; /* Un tono más oscuro al pasar el mouse */
+}
+
+.btn-warning {
+  background-color: #FFC107;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Contenedor del formulario con fondo beige */
+.form-container {
+  background-color: #D9CAB3; /* Beige */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  width: 100%; /* Se ajusta al tamaño */
+}
+
+/* Estilos de los campos del formulario */
+.form-control, .form-select {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+/* Ajuste del botón de registro */
+.btn-primary {
+  font-weight: bold;
+  padding: 10px;
+}
+
+/* Alertas de mensajes flash */
+.alert {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Estilo personalizado del filtro de productos */
+.filtro-personalizado {
+  width: 300px; /* Más ancho */
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 2px solid #BC8034;
+  color: #5E0B15;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Efecto al pasar el mouse */
+.filtro-personalizado:hover {
+  background-color: #BC8034;
+  color: #fff;
+}
+
+/* Ajuste de alineación */
+.text-center select {
+  margin-bottom: 15px;
+}
+
+/* Alinear el filtro correctamente */
+.text-center select {
+  margin-bottom: 15px;
+}
+
+  /* Aumentar el ancho del fondo beige SOLO para productos */
+  .productos-container {
+    width: 100vw; /* Se expande a todo el ancho de la ventana */
+    max-width: 100%; /* Asegura que no haya límite */
+    background-color: #f5e0c3;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+  
+/* Ajustar el ancho de la tabla */
+.productos-wrapper {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Aumentar el tamaño de las celdas */
+.productos-table {
+    font-size: 18px; /* Texto más grande */
+}
+
+/* Ajustar imágenes en la tabla */
+.productos-table img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
 }

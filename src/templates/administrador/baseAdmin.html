@@ -28,8 +28,9 @@
     >
 
     {% block customCSS %}
-    <!-- Enlace al CSS -->
+    <!-- Enlace a ambos CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
     {% endblock %}
 </head>
 <body>
@@ -41,25 +42,26 @@
             <ul class="nav-links">
                 <li><a href="/ADMINISTRADOR/transacciones" title="Transacciones">Transacciones</a></li>
                 <li><a href="/ADMINISTRADOR/productos" title="Productos">Productos</a></li>
-                <li><a href="/ADMINISTRADOR/crud" title="Usuarios">Usuarios</a></li>
+                <li><a href="/ADMINISTRADOR/gestores" title="Gestores">Gestores</a></li>
+                <li><a href="/ADMINISTRADOR/usuarios" title="Usuarios">Usuarios</a></li>
                 
                 <!-- Dropdown para usuario admin -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle"
-                       data-bs-toggle="dropdown"
-                       href="#"
-                       role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false"
-                       title="Admin">
-                       {{ user[1] }} <!-- Nombre o "Admin" -->
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/ADMINISTRADOR/perfil" title="Mi perfil">Mi perfil</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/CULTIVARED/logout" title="Cerrar Sesión">Cerrar Sesión</a>
-                    </div>
-                </li>
+                  <a class="nav-link dropdown-toggle"
+                     data-bs-toggle="dropdown"
+                     href="#"
+                     role="button"
+                     aria-haspopup="true"
+                     aria-expanded="false"
+                     title="{{ user.nombre if user and user.nombre else 'Admin' }}">
+                     {{ user.nombre if user and user.nombre else 'Admin' }}
+                  </a>
+                  <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/ADMINISTRADOR/perfil" title="Mi perfil">Mi perfil</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/CULTIVARED/logout" title="Cerrar Sesión">Cerrar sesión</a>
+                  </div>
+              </li>              
             </ul>
         </div>
     </nav>

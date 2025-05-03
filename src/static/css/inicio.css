@@ -63,6 +63,32 @@ body {
     color: #BC8034; /* Naranja */
 }
 
+.nav-item.dropdown {
+    position: relative;
+  }
+
+/* Ajustar la posición del menú desplegable */
+.dropdown-menu {
+    position: absolute;
+    right: 0; /* Asegura que no se pierda fuera del contenedor */
+    left: auto;
+    transform: translateX(-10%); /* Desplaza ligeramente hacia la izquierda */
+    min-width: 180px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #5E0B15; /* Rojo oscuro */
+}
+  
+  /* Mejorar visibilidad dentro del dropdown */
+.dropdown-item {
+    padding: 10px 15px;
+    color: #fff;
+}
+  
+.dropdown-item:hover {
+    background-color: #BC8034; /* Amarillo dorado */
+}
+ 
 .navbar .dropdown-menu {
     background-color: #5E0B15; /* Rojo oscuro */
 }

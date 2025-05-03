@@ -49,6 +49,25 @@
       </div>
     </div>
 
+    <!--Gestores -->
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="row justify-content-center mt-5"></div>
+      <div class="card text-center custom-card">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center"></div>
+        <!-- Imagen -->
+         <img 
+          src="{{ url_for('static', filename='img/gestores.png') }}" 
+          alt="Icono Gestores" 
+          class="card-img-top mx-auto d-block icono-color"
+          style="width: 80px; margin-top: 20px;"
+         >
+        <div class="card-body">
+          <h5 class="card-title">Gestores</h5>
+          <a href="/ADMINISTRADOR/gestores" class="btn btn-secondary mt-2">Mostrar</a>
+        </div>
+      </div>
+    </div>
+
     <!--Usuarios -->
     <div class="col-md-3 col-sm-6 mb-4">
       <div class="row justify-content-center mt-5"></div>
@@ -63,7 +82,7 @@
          >
         <div class="card-body">
           <h5 class="card-title">Usuarios</h5>
-          <a href="/ADMINISTRADOR/crud" class="btn btn-secondary mt-2">Mostrar</a>
+          <a href="/ADMINISTRADOR/usuarios" class="btn btn-secondary mt-2">Mostrar</a>
         </div>
       </div>
     </div>

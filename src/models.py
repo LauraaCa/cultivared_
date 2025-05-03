@@ -12,8 +12,7 @@ class Usuarios(db.Model):
     telefono = db.Column(db.String(20), unique=True, nullable=False)
     rol = db.Column(db.String(20), nullable=False)
     contrasena = db.Column(db.String(100), nullable=False)
-
-
+    
 class Producto(db.Model):
     __tablename__ = "productos"
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
