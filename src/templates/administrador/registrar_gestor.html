@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+{% extends 'administrador/baseAdmin.html' %}
+{% block body %}
+
+<!-- Enlace al CSS personalizado -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
+  <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">REGISTRAR GESTOR</h1>
+
+  <!-- Contenedor -->
+  <div class="form-container p-4 w-50">
+
+      <!-- Mensajes Flash -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              <ul class="alert alert-info">
+                  {% for category, message in messages %}
+                      <li class="{{ category }}">{{ message }}</li>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+      {% endwith %}
+
+      <!-- FORMULARIO -->
+      <form action="{{ url_for('admin_blueprint.registrar_gestor') }}" method="POST">
+          
+          <div class="mb-3">
+              <label for="id" class="form-label">Identificación:</label>
+              <input type="text" class="form-control" id="id" name="id" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido:</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="genero" class="form-label">Género:</label>
+              <select class="form-select" id="genero" name="genero" required>
+                  <option value="Masculino">Hombre</option>
+                  <option value="Femenino">Mujer</option>
+              </select>
+          </div>
+
+          <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico:</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono:</label>
+              <input type="text" class="form-control" id="telefono" name="telefono" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="contrasena" class="form-label">Contraseña:</label>
+              <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="rol" class="form-label">Rol:</label>
+              <select class="form-select" id="rol" name="rol">
+                  <option value="Admin">Admin</option>
+                  <option value="Gestor">Gestor</option>
+              </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Registrar</button>
+      </form>
+
+      <div class="text-center mt-4">
+          <a href="{{ url_for('admin_blueprint.gestores') }}" class="btn btn-secondary">Volver a gestores</a>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

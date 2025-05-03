@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+{% extends 'administrador/baseAdmin.html' %}
+{% block body %}
+
+<!-- Enlace al CSS personalizado -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
+    <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">REGISTRAR NUEVO PRODUCTO</h1>
+
+    <div class="form-container p-4 w-50">
+        <!-- Mensajes Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="alert alert-info">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- FORMULARIO -->
+        <form action="{{ url_for('admin_blueprint.registrar_producto') }}" method="POST" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label for="idProducto" class="form-label">Código del producto:</label>
+                <input type="text" class="form-control" id="idProducto" name="idProducto" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="nombreProducto" class="form-label">Nombre del roducto:</label>
+                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoría:</label>
+                <select class="form-select" id="categoria" name="categoria" required>
+                    <option disabled selected>Seleccionar categoría</option>
+                    <option value="Frutas">Frutas</option>
+                    <option value="Verduras">Verduras</option>
+                    <option value="Granos">Granos</option>
+                    <option value="Lácteos">Lácteos</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad disponible:</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="precio" class="form-label">Precio unitario:</label>
+                <input type="number" class="form-control" id="precio" name="precio" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_vendedor" class="form-label">Asignar vendedor:</label>
+                <select class="form-select" id="id_vendedor" name="id_vendedor" required>
+                    <option disabled selected>Seleccionar vendedor</option>
+                    {% for vendedor in vendedores %}
+                        <option value="{{ vendedor.id }}">{{ vendedor.nombre }} (ID: {{ vendedor.id }})</option>
+                    {% endfor %}
+                </select>
+            </div>            
+
+            <div class="mb-3">
+                <label for="descripcionProducto" class="form-label">Descripción:</label>
+                <textarea class="form-control" id="descripcionProducto" name="descripcionProducto" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen del producto:</label>
+                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Registrar</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('admin_blueprint.productos') }}" class="btn btn-secondary">Volver a productos</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

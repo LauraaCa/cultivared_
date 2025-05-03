@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% extends 'administrador/baseAdmin.html' %}
+
+{% block body %}
+<!-- Link al CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<!-- Contenedor -->
+<div class="container mt-5 editar-perfil">
+  <h1 class="text-center" id="panel-title">EDITAR DATOS</h1>
+
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <!-- Tarjeta con la clase custom-card -->
+      <div class="card custom-card p-4">
+        
+        <!-- Formulario de edición -->
+        <form method="POST" action="{{ url_for('admin_blueprint.editar_usuario', id=usuario.id) }}">
+          <!-- ID oculto -->
+          <input type="hidden" name="id" value="{{ usuario.id }}">
+
+          <!-- Fila 1: Identificación y teléfono -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Identificación</label>
+              <input type="text" class="form-control" value="{{ usuario.id }}" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Teléfono</label>
+              <input 
+                type="text" 
+                name="telefono" 
+                class="form-control"
+                value="{{ usuario.telefono }}"
+                required
+              >
+            </div>                     
+          </div>
+
+          <!-- Fila 2: Nombres y apellidos -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Nombres</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                class="form-control"
+                value="{{ usuario.nombre }}"
+                required
+              >
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Apellidos</label>
+              <input 
+                type="text" 
+                name="apellido" 
+                class="form-control"
+                value="{{ usuario.apellido }}"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Fila 3: Rol y correo -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Rol</label>
+              <select name="rol" class="form-control" required>
+                <option value="Vendedor" {% if usuario.rol == 'Vendedor' %}selected{% endif %}>Vendedor</option>
+                <option value="Comprador" {% if usuario.rol == 'Comprador' %}selected{% endif %}>Comprador</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Correo electrónico</label>
+              <input 
+                type="email" 
+                name="email" 
+                class="form-control"
+                value="{{ usuario.email }}"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-center mt-4">
+            <button type="submit" class="btn btn-secondary px-5">Guardar cambios</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
