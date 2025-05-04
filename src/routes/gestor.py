@@ -58,7 +58,7 @@ def obtener_usuario_por_id(user_id):
     connection.close()
     return usuario
 
-@main.route('/GESTOR/perfil_usuario/<int:user_id>')
+@main.route('/GESTOR/perfil_usuario/<int:user_id>') 
 def perfil_usuario(user_id):
     conn = get_connection()
     cur = conn.cursor()
@@ -137,3 +137,97 @@ def inventario_usuario(user_id):
     conn.close()
 
     return render_template('gestor/inventarioUsuario.html', produ=productos, user=user)
+
+
+
+@main.route('/historial_pedidos/<int:user_id>')
+def historial_pedidos(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Traer productos registrados por ese usuario
+    cur.execute('SELECT * FROM productos WHERE id_vendedor = %s', (user_id,))
+    productos = cur.fetchall()
+
+    # Traer info del usuario (opcional)
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template('gestor/historialPedidos.html', produ=productos, user=user)
+
+
+@main.route('/resumen_ventas/<int:user_id>')
+def resumen_ventas(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Traer productos registrados por ese usuario
+    cur.execute('SELECT * FROM productos WHERE id_vendedor = %s', (user_id,))
+    productos = cur.fetchall()
+
+    # Traer info del usuario (opcional)
+    cur.execute('SELECT * FROM usuarios WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template('gestor/resumenVentas.html', produ=productos, user=user)
+
+
+@main.route('/grafico_vendedor/<int:user_id>')
+def grafico_vendedor(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Traer productos registrados por ese usuario
+    cur.execute('SELECT id, nombre, descripcion, categoria, cantidad, precio FROM productos WHERE id_vendedor = %s', (user_id,))
+    productos = cur.fetchall()
+
+    # Traer info del usuario (AQUÍ tenías mal la consulta, repetías la misma de productos)
+    cur.execute('SELECT id, nombre FROM usuarios WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    # Procesar datos para los gráficos
+    nombres_productos = []
+    cantidades_productos = []
+    ingresos_productos = []
+
+    for producto in productos:
+        nombre = producto[1]  # era producto[0], pero eso es el id; el nombre está en la posición 1
+        cantidad = producto[4]
+        precio = float(producto[5])
+
+        nombres_productos.append(nombre)
+        cantidades_productos.append(cantidad)
+        ingresos_productos.append(cantidad * precio)
+
+    # Preparar meses e ingresos por mes
+    if productos:  # Si hay productos
+        meses = ["Enero", "Febrero", "Marzo"]  # Ejemplo fijo (luego puedes hacerlo dinámico)
+        ingresos_por_mes = [1000, 1500, 800]  # También ejemplo
+    else:
+        meses = []
+        ingresos_por_mes = []
+
+    productos_mas_vendidos_nombres = []
+    productos_mas_vendidos_cantidades = []
+
+    # Renderizar el template
+    return render_template('gestor/graficoVendedor.html',
+        produ=productos,
+        user=user,
+        nombres_productos=nombres_productos,
+        cantidades_productos=cantidades_productos,
+        ingresos_productos=ingresos_productos,
+        meses=meses,
+        ingresos_por_mes=ingresos_por_mes,
+        productos_mas_vendidos_nombres=productos_mas_vendidos_nombres,
+        productos_mas_vendidos_cantidades=productos_mas_vendidos_cantidades
+    )

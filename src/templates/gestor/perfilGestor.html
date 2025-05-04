@@ -31,9 +31,7 @@
                             <h2>Perfil del Gestor</h2>
                         </div>
                         <div class="card-body">
-                            <div class="text-center">
-                                <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Perfil" class="perfil-img">
-                            </div>
+                            
                             <h4 class="text-center">{{ user[1] }} {{ user[2] }}</h4>
                             <div class="perfil-info">
                                 <p><strong>Email:</strong> {{ user[4] }}</p>
@@ -55,7 +53,7 @@
                             <ul class="menu-list">
                                 <li><a href="{{ url_for('gestor_blueprint.gestion_usuarios') }}">Gestión de Usuarios</a></li>
                                 <li><a href="{{ url_for('gestor_blueprint.dashboard') }}">Dashboard</a></li>
-                                <li><a href="#">Comparativas y Ranking</a></li>
+                                
                             </ul>
                         </div>    
                     </div>

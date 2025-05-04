@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<nav class="navbar sticky-top">
+    <div class="container">
+        <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+        <a href="{{ url_for('gestor_blueprint.perfil_usuario', user_id=user[0]) }}" class="text-white">Atras</a>
+    </div>
+</nav>
+
+
+<div class="container mt-4">
+    <h2 class="mb-4">Historial de Pedidos</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                    <th>Fecha de Venta</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle, transaccion, producto in historial %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>${{ detalle.precio_unitario }}</td>
+                    <td>${{ (detalle.precio_unitario * detalle.cantidad) | round(2) }}</td>
+                    <td>{{ transaccion.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay pedidos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<nav class="navbar sticky-top">
+    <div class="container">
+        <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+        <a href="{{ url_for('gestor_blueprint.perfil_usuario', user_id=user[0]) }}" class="text-white">Atras</a>
+    </div>
+</nav>
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Resumen de Ventas</h2>
+
+    <div class="row g-4">
+
+        <!-- Total de Ventas -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total de Ventas</h5>
+                    <p class="card-text fs-3">${{ total_ventas }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de Productos Vendidos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Productos Vendidos</h5>
+                    <p class="card-text fs-3">{{ total_productos_vendidos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Número de Ventas Realizadas -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Ventas Realizadas</h5>
+                    <p class="card-text fs-3">{{ numero_ventas }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

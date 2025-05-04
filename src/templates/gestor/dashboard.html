@@ -1,7 +1,6 @@
-
 {% extends 'base.html' %}
-{% block body %}
 
+{% block body %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,61 +16,97 @@
     <nav class="navbar sticky-top">
         <div class="container">
             <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+            <a href="/GESTOR" class="text-white text-decoration-none">Atrás</a>
         </div>
     </nav>
-
-    <div class="container">
-        <h2>Dashboard de Estadísticas</h2>
     
-        <div class="card">
-            <h5>Total de Vendedores: {{ total_vendedores }}</h5>
-            <h5>Total de Compradores: {{ total_compradores }}</h5>
-            <h5>Total de Ingresos: ${{ total_ingresos }}</h5>
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4">Dashboard de Estadísticas</h1>
         </div>
-    
-        <div class="chart-container">
-            <h3>Ventas por Vendedor</h3>
-            <div style="width: 300px; height: 150px;">
-                <canvas id="ventasChart"></canvas>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5 class="card-title">Total de Vendedores</h5>
+                    <p class="card-text fs-3">{{ total_vendedores }}</p>
+                </div>
             </div>
-        
-            <h3>Productos Más Vendidos</h3>
-            <div style="width: 300px; height: 150px;">
-                <canvas id="productosChart"></canvas>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5 class="card-title">Total de Compradores</h5>
+                    <p class="card-text fs-3">{{ total_compradores }}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5 class="card-title">Total de Ingresos</h5>
+                    <p class="card-text fs-3">${{ total_ingresos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4">
+                    <h4 class="text-center mb-4">Ventas por Vendedor</h4>
+                    <canvas id="ventasChart" style="height:300px;"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4">
+                    <h4 class="text-center mb-4">Productos Más Vendidos</h4>
+                    <canvas id="productosChart" style="height:300px;"></canvas>
+                </div>
             </div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var ctx1 = document.getElementById('ventasChart').getContext('2d');
-    var ventasChart = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: [{% for vendedor, _ in ventas_por_vendedor %}"{{ vendedor }}"{% if not loop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Ventas',
-                data: [{% for _, ventas in ventas_por_vendedor %}{{ ventas }}{% if not loop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)'
-            }]
-        }
-    });
-</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx1 = document.getElementById('ventasChart').getContext('2d');
+        var ventasChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: [{% for vendedor, _ in ventas_por_vendedor %}"{{ vendedor }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Ventas',
+                    data: [{% for _, ventas in ventas_por_vendedor %}{{ ventas }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        var ctx2 = document.getElementById('productosChart').getContext('2d');
+        var productosChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: [{% for producto, _ in productos_mas_vendidos %}"{{ producto }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Cantidad',
+                    data: [{% for _, cantidad in productos_mas_vendidos %}{{ cantidad }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
 
 
-<script>
-    var ctx2 = document.getElementById('productosChart').getContext('2d');
-    var productosChart = new Chart(ctx2, {
-        type: 'pie',
-        data: {
-            labels: [{% for producto, _ in productos_mas_vendidos %}"{{ producto }}"{% if not loop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                label: 'Cantidad',
-                data: [{% for _, cantidad in productos_mas_vendidos %}{{ cantidad }}{% if not loop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: ['red', 'blue', 'green', 'yellow', 'purple']
-            }]
-        }
-    });
-</script>
 </body>
 </html>
 
