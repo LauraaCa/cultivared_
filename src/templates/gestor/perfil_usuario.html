@@ -8,14 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GESTOR</title>
     <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
-    <link rel="stylesheet" href="/src/static/css/gestor.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gestor.css') }}">
 </head>
 <body>
     <nav class="navbar sticky-top">
         <div class="container">
-            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>  
+            <a href="/GESTOR/gestion_usuarios" class="text-white">Atras</a>          
         </div>
 
 
@@ -31,9 +31,7 @@
                             <h2>Perfil del Usuario</h2>
                         </div>
                         <div class="card-body">
-                            <div class="text-center">
-                                <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Perfil" class="perfil-img">
-                            </div>
+                            
                             <h4 class="text-center">{{ user[1] }} {{ user[2] }}</h4>
                             <div class="perfil-info">
                                 <p><strong>Email:</strong> {{ user[4] }}</p>
@@ -54,16 +52,16 @@
                                 <!-- aqui vienen estadisticas, inventario, graficos -->
                                 <li><a href="{{ url_for('gestor_blueprint.inventario_usuario', user_id=user[0]) }}">Ver Inventario</a></li>
                                 <li><a href="#">Reportes:</a></li>
-                                <li><a href="#">Historial de pedidos</a></li>
-                                <li><a href="#">Resumen de ventas</a></li>
-                                <li><a href="#">Graficos</a></li>
+                                <li><a href="{{ url_for('gestor_blueprint.historial_pedidos', user_id=user[0]) }}">Historial de pedidos</a></li>
+                                <li><a href="{{ url_for('gestor_blueprint.resumen_ventas', user_id=user[0]) }}">Resumen de ventas</a></li>
+                                <a href="{{ url_for('gestor_blueprint.grafico_vendedor', user_id=user[0]) }}">Gráficos</a> <!-- Correcto -->
                             </ul>
                         </div>    
                     </div>
                 </div>
             </div>
         </div>
-    
+        
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </body>

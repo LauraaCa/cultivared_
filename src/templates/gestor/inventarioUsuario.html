@@ -1,45 +1,63 @@
-{% extends 'vendedor/vendedorBase.html' %}
+{% extends 'base.html' %}
 {% block body %}
 
-{% block customCSS %}
-<link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css"> 
-{% endblock %}
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <form action="/MisProductos">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Código</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Descripción</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for producto in produ %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTOR</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendedorHome.css') }}">
+
+
+</head>
+<body>    
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a href="/CULTIVARED" class="logo" title="CultivaRed"><span class="li">Cultiva</span>Red</a>            
+            <a href="{{ url_for('gestor_blueprint.perfil_usuario', user_id=user[0]) }}" class="text-white">Atras</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form action="/MisProductos">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td>{{ producto[0] }}</td>  <!-- id -->
-                                    <td>{{ producto[1] }}</td>  <!-- nombre -->
-                                    <td>{{ producto[2] }}</td>  <!-- descripcion -->
-                                    <td>{{ producto[4] }}</td>  <!-- cantidad -->
-                                    <td>${{ producto[5] }}</td>  <!-- precio -->
-                                    <td>
-                                    </td>
+                                    <th scope="col">Código</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Precio</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
+                            </thead>
+                            <tbody>
+                                {% for producto in produ %}
+                                    <tr>
+                                        <td>{{ producto[0] }}</td>  <!-- id -->
+                                        <td>{{ producto[1] }}</td>  <!-- nombre -->
+                                        <td>{{ producto[2] }}</td>  <!-- descripcion -->
+                                        <td>{{ producto[4] }}</td>  <!-- cantidad -->
+                                        <td>${{ producto[5] }}</td>  <!-- precio -->
+                                        <td>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            
+                        </table>
                         
-                    </table>
-                    <a href="/Gestor" class="btn btn-secondary btn-lg">Atrás</a>
-                </div>
-            </form>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>
 
 {% endblock %}
