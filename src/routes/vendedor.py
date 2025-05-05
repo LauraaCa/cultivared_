@@ -1,7 +1,8 @@
-from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 from config import get_connection  # Importamos la conexión a PostgreSQL
-from flask import send_file
 import io
+from flask import Flask, flash, render_template, Blueprint, request, redirect, send_file, url_for, session
+from models import db, Producto
+
 
 main = Blueprint('vendedor_blueprint', __name__)
 #
@@ -160,3 +161,47 @@ def mi_perfil():
     conn.close()
 
     return render_template('/vendedor/perfil.html', user=user)
+
+@main.route('/productos/editar/<int:id>', methods=['GET', 'POST'])
+def editar_producto(id):
+    try:
+        producto = Producto.query.get(id)
+        if not producto:
+            flash("El producto no existe o no se pudo cargar.", "error")
+            return redirect(url_for('vendedor_blueprint.mis_productos'))
+        
+        if request.method == 'POST':
+            producto.nombre = request.form['nombreProducto']
+            producto.categoria = request.form['categoria']
+            producto.cantidad = request.form['cantidad']
+            producto.precio = request.form['precio']
+            producto.descripcion = request.form['descripcionProducto']
+
+            imagen_file = request.files.get('imagen')
+            if imagen_file and imagen_file.filename != '':
+                producto.imagen = imagen_file.read()
+
+            db.session.commit()
+            flash("Producto actualizado correctamente.", "success")
+            return redirect(url_for('vendedor_blueprint.mis_productos'))
+        
+        return render_template('vendedor/editar_producto.html', producto=producto)
+
+    except Exception as e:
+        flash(f"Error al procesar la solicitud: {str(e)}", "error")
+        return redirect(url_for('vendedor_blueprint.mis_productos'))
+
+
+@main.route('/productos/eliminar/<int:id>', methods=['GET','POST'])
+def eliminar(id):
+    producto = Producto.query.get(id)
+
+    if not producto:
+        flash("El producto no existe.", "error")
+        return redirect(url_for('vendedor_blueprint.mis_productos'))
+
+    db.session.delete(producto)
+    db.session.commit()
+
+    flash("Producto eliminado correctamente.", "success")
+    return redirect(url_for('vendedor_blueprint.mis_productos'))

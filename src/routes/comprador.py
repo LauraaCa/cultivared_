@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
 from config import get_connection  # Conexión a PostgreSQL
+import io
 
 main = Blueprint('comprador_blueprint', __name__)
 
@@ -162,3 +163,17 @@ def remove_from_cart(product_id):
         session['cart'] = cart
         flash('Producto eliminado del carrito', 'info')
     return redirect(url_for('comprador_blueprint.carrito'))
+
+@main.route('/imagen_producto/<int:producto_id>')
+def imagen_producto(producto_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT imagen FROM productos WHERE id = %s", (producto_id,))
+    imagen = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if imagen and imagen[0]:
+        return send_file(io.BytesIO(imagen[0]), mimetype='image/jpeg')  # O image/png si usas PNG
+    else:
+        return "", 204  # Sin contenido
