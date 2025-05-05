@@ -1,1 +1,9 @@
+# Entorno virtual
 venv/
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+
+# Archivos de entorno
+.env
