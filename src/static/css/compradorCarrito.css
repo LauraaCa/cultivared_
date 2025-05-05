@@ -1,0 +1,19 @@
+/* Aumentamos la altura mínima de los card-body dentro de .card.h-100 */
+.card.h-100 .card-body {
+    min-height: 300px;   /* ajusta este valor al que necesites */
+    background: blue;
+  }
+  
+  /* Tus cajas siguen igual */
+  .caja-rectangulo {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+  }
+  
+  .caja-cuadrado {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+  }
+  
