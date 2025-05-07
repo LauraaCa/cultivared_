@@ -10,24 +10,26 @@ def _init_cart():
 
 @main.route('/')
 def comprador():
-    if not session.get('logueado'):
-        flash('Por favor, primero inicie sesión.', 'warning')
-        return redirect(url_for('auth.login'))
+    if 'logueado' in session and session['logueado']:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # Obtener datos del usuario autenticado
+        cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
+        user = cur.fetchone()
+        
+        cur.execute('SELECT * FROM productos')
+        producto = cur.fetchall()
+        
+        cur.close()
+        conn.close()
 
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
-    user = cur.fetchone()
-    cur.execute('SELECT * FROM productos')
-    productos = cur.fetchall()
-    cur.close(); conn.close()
-
-    if not user:
-        flash('Usuario no encontrado.', 'danger')
-        return redirect(url_for('auth.login'))
-
-    return render_template('comprador/comprador.html',
-                           user=user, producto=productos)
+        if user:
+            return render_template('comprador/comprador.html', user=user, producto=producto)
+        else:
+            return """<script> alert("Usuario no encontrado."); window.location.href = "/CULTIVARED/login"; </script>"""
+    
+    return """<script> alert("Por favor, primero inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
 @main.route('/PERFIL')
 def perfil():
