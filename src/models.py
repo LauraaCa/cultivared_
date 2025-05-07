@@ -3,6 +3,8 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+# En tu archivo de inicialización o shell
+
 class Usuarios(db.Model):
     __tablename__ = "usuarios"
     id = db.Column(db.BigInteger, primary_key=True) 
@@ -50,20 +52,17 @@ class Transaccion(db.Model):
 #                              back_populates="transaccion",
 #                              cascade="all, delete-orphan")
 
-class TransaccionItem(db.Model):
-    __tablename__ = "transaccion_items"
+class Transaccion(db.Model):
+    __tablename__ = "transacciones_items"
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    transaccion_id = db.Column(db.BigInteger,
-                                db.ForeignKey("transacciones.id", ondelete="CASCADE"),
-                                nullable=False)
-    producto_id = db.Column(db.BigInteger,
-                             db.ForeignKey("productos.id"),
-                             nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
-    precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
+    id_usuario = db.Column(db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
+    fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    total = db.Column(db.Numeric(10,2), nullable=False)
+    descripcion = db.Column(db.Text, nullable=True)
 
-    transaccion = db.relationship("Transaccion", back_populates="items")
-    producto = db.relationship("Producto")
+    usuario = db.relationship("Usuarios", backref=db.backref("transacciones", lazy=True))
+    items = db.relationship("TransaccionItem", back_populates="transaccion", cascade="all, delete-orphan")  # <-- esta línea
+
     
 class Carrito(db.Model):
     __tablename__ = "carrito"

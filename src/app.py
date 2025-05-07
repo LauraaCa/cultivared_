@@ -10,7 +10,8 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-    print("✅ Tablas creadas exitosamente.")
+    print("🧨 Tablas eliminadas y creadas nuevamente.")
+
 
 def page_not_found(error):
     return "<h1>404 - Página no encontrada</h1>", 404

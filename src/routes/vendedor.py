@@ -41,11 +41,11 @@ def registro_productos():
 
     return render_template('/vendedor/regitrosProducto.html', user=user)
 
-
 @main.route('/formularioProductos', methods=['GET', 'POST'])
 def form():
     if 'id' not in session:
-        return """<script> alert("Por favor, inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
+        flash("Por favor, inicie sesión.", "warning")
+        return redirect(url_for('autenticacion.login'))
 
     if request.method == 'POST':
         try:
@@ -78,12 +78,14 @@ def form():
             cur.close()
             conn.close()
 
-            return redirect(url_for('vendedor_blueprint.mis_productos'))
+            return "<script>alert('Usuario registrado correctamente'); window.location.href = '/CULTIVARED/RegistroProductos';</script>"
 
         except Exception as e:
-            return f"<script>alert('Error al registrar el producto: {str(e)}'); window.location.href = '/VENDEDOR/RegistroProductos';</script>"
+            flash(f"❌ Error al registrar el producto: {str(e)}", "danger")
+            return redirect(url_for('vendedor_blueprint.registro_productos'))
 
     return redirect(url_for('vendedor_blueprint.registro_productos'))
+
 
 @main.route('/imagen_producto/<int:producto_id>')
 def imagen_producto(producto_id):
@@ -205,3 +207,9 @@ def eliminar(id):
 
     flash("Producto eliminado correctamente.", "success")
     return redirect(url_for('vendedor_blueprint.mis_productos'))
+
+@main.route('/logout')
+def logout():
+    session.clear()  # Elimina toda la información de la sesión
+    flash("Has cerrado sesión correctamente.", "success")
+    return redirect('/CULTIVARED/login')
