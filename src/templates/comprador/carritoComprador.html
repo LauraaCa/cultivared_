@@ -68,9 +68,11 @@
                     <span>Total:</span>
                     <span>${{ carrito_total }}</span>
                   </div>
-                  <a href="{{ url_for('comprador_blueprint.carrito') }}" class="btn btn-success w-100 mt-3">
-                    Ir a pagar
-                  </a>
+                    <form action="{{ url_for('comprador_blueprint.checkout') }}" method="post">
+                      <button type="submit" class="btn btn-pagar w-100 mt-3">
+                        Ir a pagar
+                      </button>
+                    </form>
                 </div>
               </div>
             </div>

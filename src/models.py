@@ -35,6 +35,35 @@ class Transaccion(db.Model):
     total = db.Column(db.Numeric(10,2), nullable=False)
     descripcion = db.Column(db.Text, nullable=True)
     usuario = db.relationship("Usuarios", backref=db.backref("transacciones", lazy=True))
+
+# class Transaccion(db.Model):
+#     __tablename__ = "transacciones"
+#     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+#     usuario_id = db.Column(db.BigInteger,
+#                             db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+#                             nullable=False)
+#     fecha = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+#     total = db.Column(db.Numeric(12, 2), nullable=False)
+
+#     usuario = db.relationship("Usuario", back_populates="transacciones")
+#     items = db.relationship("TransaccionItem",
+#                              back_populates="transaccion",
+#                              cascade="all, delete-orphan")
+
+class TransaccionItem(db.Model):
+    __tablename__ = "transaccion_items"
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    transaccion_id = db.Column(db.BigInteger,
+                                db.ForeignKey("transacciones.id", ondelete="CASCADE"),
+                                nullable=False)
+    producto_id = db.Column(db.BigInteger,
+                             db.ForeignKey("productos.id"),
+                             nullable=False)
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
+
+    transaccion = db.relationship("Transaccion", back_populates="items")
+    producto = db.relationship("Producto")
     
 class Carrito(db.Model):
     __tablename__ = "carrito"
