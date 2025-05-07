@@ -108,7 +108,11 @@
             </form>
             
             {% if p[3] %}
-              <img src="{{ p[3] }}" class="card-img-top" alt="Imagen de {{ p[1] }}">
+            <img src="{{ url_for('comprador_blueprint.imagen_producto', producto_id=p[0]) }}"
+     class="card-img-top" alt="Imagen del producto"
+     style="width: 100%; height: 200px; object-fit: cover;"
+     onerror="this.onerror=null; this.src='/static/img/default.png';">
+
             {% else %}
               <img src="https://via.placeholder.com/300x200?text=Sin+Imagen"
                   class="card-img-top" alt="Sin imagen">
