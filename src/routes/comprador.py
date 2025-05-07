@@ -10,24 +10,26 @@ def _init_cart():
 
 @main.route('/')
 def comprador():
-    if not session.get('logueado'):
-        flash('Por favor, primero inicie sesión.', 'warning')
-        return redirect(url_for('auth.login'))
+    if 'logueado' in session and session['logueado']:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # Obtener datos del usuario autenticado
+        cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
+        user = cur.fetchone()
+        
+        cur.execute('SELECT * FROM productos')
+        producto = cur.fetchall()
+        
+        cur.close()
+        conn.close()
 
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
-    user = cur.fetchone()
-    cur.execute('SELECT * FROM productos')
-    productos = cur.fetchall()
-    cur.close(); conn.close()
-
-    if not user:
-        flash('Usuario no encontrado.', 'danger')
-        return redirect(url_for('auth.login'))
-
-    return render_template('comprador/comprador.html',
-                           user=user, producto=productos)
+        if user:
+            return render_template('comprador/comprador.html', user=user, producto=producto)
+        else:
+            return """<script> alert("Usuario no encontrado."); window.location.href = "/CULTIVARED/login"; </script>"""
+    
+    return """<script> alert("Por favor, primero inicie sesión."); window.location.href = "/CULTIVARED/login"; </script>"""
 
 @main.route('/PERFIL')
 def perfil():
@@ -52,50 +54,166 @@ def add_to_cart(product_id):
     _init_cart()
     cart = session['cart']
     key = str(product_id)
-    cart[key] = cart.get(key, 0) + 1
-    session['cart'] = cart
-    flash('Producto agregado al carrito', 'success')
+
+    # 1) Consultar stock en la BD
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT cantidad FROM productos WHERE id = %s", (product_id,))
+    row = cur.fetchone()
+    cur.close(); conn.close()
+
+    stock = row[0] if row else 0
+    nueva_qty = cart.get(key, 0) + 1
+
+    # 2) Validar
+    if nueva_qty > stock:
+        flash(f"No puedes agregar más de {stock} unidades de este producto.", 'warning')
+    else:
+        cart[key] = nueva_qty
+        session['cart'] = cart
+        flash('Producto agregado al carrito', 'success')
+
     return redirect(request.referrer or url_for('comprador_blueprint.comprador'))
+
+@main.route('/cart/update/<int:product_id>', methods=['POST'])
+def update_cart(product_id):
+    _init_cart()
+    cart = session['cart']
+    new_qty = int(request.form.get('quantity', 0))
+    key = str(product_id)
+
+    # 1) Consultar stock
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT cantidad FROM productos WHERE id = %s", (product_id,))
+    row = cur.fetchone()
+    cur.close(); conn.close()
+    stock = row[0] if row else 0
+
+    # 2) Validar
+    if new_qty <= 0:
+        cart.pop(key, None)
+        flash('Producto eliminado del carrito', 'info')
+    elif new_qty > stock:
+        cart[key] = stock
+        flash(f"Solo quedan {stock} unidades disponibles; cantidad ajustada.", 'warning')
+    else:
+        cart[key] = new_qty
+        flash('Cantidad actualizada', 'success')
+
+    session['cart'] = cart
+    return redirect(url_for('comprador_blueprint.carrito'))
+
+@main.route('/cart/remove/<int:product_id>', methods=['POST'])
+def remove_from_cart(product_id):
+    _init_cart()
+    cart = session['cart']
+    if str(product_id) in cart:
+        cart.pop(str(product_id))
+        session['cart'] = cart
+        flash('Producto eliminado del carrito', 'info')
+    return redirect(url_for('comprador_blueprint.carrito'))
+
+@main.route('/cart/checkout', methods=['POST'])
+def checkout():
+    if not session.get('logueado'):
+        flash('Por favor, inicia sesión primero.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    _init_cart()
+    cart = session['cart']
+    if not cart:
+        flash('Tu carrito está vacío.', 'info')
+        return redirect(url_for('comprador_blueprint.comprador'))
+
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        # Calcula el total de la transacción
+        total = sum(
+            prod['precio'] * qty
+            for pid_str, qty in cart.items()
+            for prod in [productos[int(pid_str)]]
+        )
+
+        # 1) Inserto cabecera
+        cur.execute(
+            "INSERT INTO transacciones (id_usuario, total) VALUES (%s, %s) RETURNING id",
+            (user_id, total)
+        )
+        trans_id = cur.fetchone()[0]
+
+        # 2) Inserto cada ítem
+        for pid_str, qty in cart.items():
+            pid = int(pid_str)
+            precio = productos[pid]['precio']
+            cur.execute(
+                """INSERT INTO transaccion_items
+                    (transaccion_id, producto_id, cantidad, precio_unitario)
+                VALUES (%s, %s, %s, %s)""",
+                (trans_id, pid, qty, precio)
+            )
+
+        
+        # 3) Para cada ítem, volvemos a comprobar stock y descontar
+        for pid_str, qty in cart.items():
+            pid = int(pid_str)
+            # Bloqueo la fila para evitar race conditions
+            cur.execute("SELECT cantidad FROM productos WHERE id = %s FOR UPDATE", (pid,))
+            row = cur.fetchone()
+            stock = row[0] if row else 0
+
+            if stock < qty:
+                raise ValueError(f"Stock insuficiente para el producto {pid}: quedan {stock}")
+
+            cur.execute(
+                "UPDATE productos SET cantidad = cantidad - %s WHERE id = %s",
+                (qty, pid)
+            )
+
+        conn.commit()
+        # 4) Vaciar carrito
+        session.pop('cart', None)
+        flash('Compra realizada con éxito. ¡Gracias!', 'success')
+    except Exception as e:
+        conn.rollback()
+        flash(str(e), 'danger')
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('comprador_blueprint.comprador'))
 
 @main.route('/CARRITO')
 def carrito():
-    # 1) Asegura que esté logueado
     if not session.get('logueado'):
-        flash('Por favor, primero inicie sesión.', 'warning')
+        flash('Por favor, inicia sesión primero.', 'warning')
         return redirect(url_for('auth.login'))
 
-    # 2) Recupera al usuario para la plantilla base
+    # Obtener usuario para la base de la plantilla
     conn = get_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
     user = cur.fetchone()
-    cur.close()
-    conn.close()
+    cur.close(); conn.close()
 
     if not user:
         flash('Usuario no encontrado.', 'danger')
         return redirect(url_for('auth.login'))
 
-    # 3) Inicializa el carrito en sesión
     _init_cart()
     cart = session['cart']
-
-    # 4) Si está vacío…
     if not cart:
         return render_template('comprador/carritoComprador.html',
                                user=user,
                                carrito_items=[], carrito_total=0)
 
-    # 5) Trae detalles de productos en sesión
+    # Traer detalles de los productos
     ids_list = [int(pid) for pid in cart.keys()]
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
-        """
-        SELECT id, nombre, descripcion, precio, imagen
-          FROM productos
-         WHERE id = ANY(%s)
-        """,
+        "SELECT id, nombre, descripcion, precio, imagen, cantidad FROM productos WHERE id = ANY(%s)",
         (ids_list,)
     )
     rows = cur.fetchall()
@@ -106,12 +224,12 @@ def carrito():
             'nombre':      row[1],
             'descripcion': row[2],
             'precio':      float(row[3]),
-            'imagen':      row[4]
+            'imagen':      row[4],
+            'stock':       row[5]
         }
         for row in rows
     }
 
-    # 6) Construye la lista para la plantilla
     carrito_items = []
     total = 0
     for pid_str, qty in cart.items():
@@ -127,38 +245,79 @@ def carrito():
             'descripcion':prod['descripcion'],
             'imagen':     prod['imagen'],
             'cantidad':   qty,
+            'stock':      prod['stock'],
             'subtotal':   subtotal
         })
 
-    # 7) Renderiza pasando también user
     return render_template('comprador/carritoComprador.html',
                            user=user,
                            carrito_items=carrito_items,
                            carrito_total=total)
 
-@main.route('/cart/update/<int:product_id>', methods=['POST'])
-def update_cart(product_id):
-    _init_cart()
-    cart = session['cart']
-    new_qty = int(request.form.get('quantity', 0))
-    key = str(product_id)
+@main.route('/PEDIDOS')
+def pedidos():
+    if not session.get('logueado'):
+        flash('Por favor, inicia sesión.', 'warning')
+        return redirect(url_for('auth.login'))
 
-    if new_qty > 0:
-        cart[key] = new_qty
-        flash('Cantidad actualizada', 'success')
-    else:
-        cart.pop(key, None)
-        flash('Producto eliminado del carrito', 'info')
+    # 1) Cargo el usuario para el menú/base
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE email = %s", (session['email'],))
+    user = cur.fetchone()
+    if not user:
+        cur.close(); conn.close()
+        flash('Usuario no encontrado.', 'danger')
+        return redirect(url_for('auth.login'))
 
-    session['cart'] = cart
-    return redirect(url_for('comprador_blueprint.carrito'))
+    # 2) Obtengo el user_id (suponiendo que está en user[0])
+    user_id = user[0]
 
-@main.route('/cart/remove/<int:product_id>', methods=['POST'])
-def remove_from_cart(product_id):
-    _init_cart()
-    cart = session['cart']
-    if str(product_id) in cart:
-        cart.pop(str(product_id))
-        session['cart'] = cart
-        flash('Producto eliminado del carrito', 'info')
-    return redirect(url_for('comprador_blueprint.carrito'))
+    # 3) Traigo las transacciones
+    cur.execute(
+        """
+        SELECT id, fecha, total
+          FROM transacciones
+         WHERE id_usuario = %s
+         ORDER BY fecha DESC
+        """,
+        (user_id,)
+    )
+    trans_rows = cur.fetchall()
+
+    pedidos = []
+    for trans_id, fecha, total in trans_rows:
+        cur.execute(
+            """
+            SELECT ti.producto_id, p.nombre, ti.cantidad, ti.precio_unitario
+              FROM transaccion_items ti
+              JOIN productos p ON p.id = ti.producto_id
+             WHERE ti.transaccion_id = %s
+            """,
+            (trans_id,)
+        )
+        items = [
+            {
+                'producto_id': pid,
+                'nombre':      nombre,
+                'cantidad':    cant,
+                'precio':      float(precio)
+            }
+            for pid, nombre, cant, precio in cur.fetchall()
+        ]
+        pedidos.append({
+            'id':    trans_id,
+            'fecha': fecha,
+            'total': float(total),
+            'items': items
+        })
+
+    cur.close()
+    conn.close()
+
+    # 4) Renderizo pasando también `user`
+    return render_template(
+        'comprador/misPedidos.html',
+        user=user,
+        pedidos=pedidos
+    )
