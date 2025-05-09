@@ -40,7 +40,9 @@
               <ul class="list-group">
                 {% for item in carrito_items %}
                 <li class="list-group-item d-flex align-items-center">
-                  <img src="{{ item.imagen_url }}" alt="" width="80" height="80" class="me-3" style="object-fit:cover">
+                  <img src="{{ url_for('comprador_blueprint.imagen_producto', producto_id=item.id) }}"
+                    class="card-img-top"
+                    alt="Imagen de {{ item.nombre }}">
                   <div class="flex-grow-1">
                     <h6>{{ item.nombre }}</h6>
                     <small class="text-muted">{{ item.descripcion }}</small>

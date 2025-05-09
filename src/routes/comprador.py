@@ -47,6 +47,22 @@ def perfil():
 
     return render_template('comprador/perfilComprador.html', user=user)
 
+@main.route('/producto/<int:producto_id>/imagen')
+def imagen_producto(producto_id):
+    """Sirve el blob de la imagen almacenada en productos.imagen."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT imagen FROM productos WHERE id = %s", (producto_id,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if not row or not row[0]:
+        abort(404)
+
+    # Ajusta el mimetype si usas jpg, png, etc.
+    return Response(row[0], mimetype='image/png')
+
 @main.route('/cart/add/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
     _init_cart()
