@@ -14,8 +14,8 @@ class Config:
 DB_CONFIG = {
     "dbname": "cultivared",
     "user": "postgres",
-    "password": "1234",
-    "host": "34.45.183.188",
+    "password": "12345",
+    "host": "34.172.195.227",
     "port": "5432"   
 }
 

@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, abort, Response
 from config import get_connection  # Conexión a PostgreSQL
+from types import SimpleNamespace
 
 main = Blueprint('comprador_blueprint', __name__)
 
@@ -18,16 +19,15 @@ def comprador():
     cur = conn.cursor()
     cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
     user = cur.fetchone()
+    if not user:
+        cur.close(); conn.close()
+        flash('Usuario no encontrado.', 'danger')
+        return redirect(url_for('auth.login'))
     cur.execute('SELECT * FROM productos')
     productos = cur.fetchall()
     cur.close(); conn.close()
 
-    if not user:
-        flash('Usuario no encontrado.', 'danger')
-        return redirect(url_for('auth.login'))
-
-    return render_template('comprador/comprador.html',
-                           user=user, producto=productos)
+    return render_template('comprador/comprador.html', user=user, producto=productos)
 
 @main.route('/PERFIL')
 def perfil():
@@ -54,13 +54,11 @@ def imagen_producto(producto_id):
     cur = conn.cursor()
     cur.execute("SELECT imagen FROM productos WHERE id = %s", (producto_id,))
     row = cur.fetchone()
-    cur.close()
-    conn.close()
+    cur.close(); conn.close()
 
     if not row or not row[0]:
         abort(404)
 
-    # Ajusta el mimetype si usas jpg, png, etc.
     return Response(row[0], mimetype='image/png')
 
 @main.route('/cart/add/<int:product_id>', methods=['POST'])
@@ -69,7 +67,6 @@ def add_to_cart(product_id):
     cart = session['cart']
     key = str(product_id)
 
-    # 1) Consultar stock en la BD
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT cantidad FROM productos WHERE id = %s", (product_id,))
@@ -79,7 +76,6 @@ def add_to_cart(product_id):
     stock = row[0] if row else 0
     nueva_qty = cart.get(key, 0) + 1
 
-    # 2) Validar
     if nueva_qty > stock:
         flash(f"No puedes agregar más de {stock} unidades de este producto.", 'warning')
     else:
@@ -96,7 +92,6 @@ def update_cart(product_id):
     new_qty = int(request.form.get('quantity', 0))
     key = str(product_id)
 
-    # 1) Consultar stock
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT cantidad FROM productos WHERE id = %s", (product_id,))
@@ -104,7 +99,6 @@ def update_cart(product_id):
     cur.close(); conn.close()
     stock = row[0] if row else 0
 
-    # 2) Validar
     if new_qty <= 0:
         cart.pop(key, None)
         flash('Producto eliminado del carrito', 'info')
@@ -142,33 +136,63 @@ def checkout():
 
     conn = get_connection()
     cur = conn.cursor()
+    # Obtener usuario
+    cur.execute('SELECT id FROM usuarios WHERE email = %s', (session['email'],))
+    row = cur.fetchone()
+    if not row:
+        cur.close(); conn.close()
+        flash('Usuario no encontrado.', 'danger')
+        return redirect(url_for('auth.login'))
+    user_id = row[0]
+
     try:
-        # 1) Para cada ítem, volvemos a comprobar stock y descontar
+        # 1) Cargar productos (stock y precio)
+        product_ids = [int(pid) for pid in cart.keys()]
+        cur.execute(
+            "SELECT id, cantidad, precio FROM productos WHERE id = ANY(%s)",
+            (product_ids,)
+        )
+        rows = cur.fetchall()
+        productos = {row[0]: {'stock': row[1], 'precio': float(row[2])} for row in rows}
+
+        # 2) Verificar stock
         for pid_str, qty in cart.items():
-            pid = int(pid_str)
-            # Bloqueo la fila para evitar race conditions
-            cur.execute("SELECT cantidad FROM productos WHERE id = %s FOR UPDATE", (pid,))
-            row = cur.fetchone()
-            stock = row[0] if row else 0
+            info = productos.get(int(pid_str))
+            if not info or qty > info['stock']:
+                raise Exception(f"Stock insuficiente para el producto {pid_str}.")
 
-            if stock < qty:
-                raise ValueError(f"Stock insuficiente para el producto {pid}: quedan {stock}")
-
+        # 3) Descontar stock
+        for pid_str, qty in cart.items():
             cur.execute(
                 "UPDATE productos SET cantidad = cantidad - %s WHERE id = %s",
-                (qty, pid)
+                (qty, int(pid_str))
+            )
+
+        # 4) Registrar Pedido con fecha explícita
+        total = sum(qty * productos[int(pid_str)]['precio'] for pid_str, qty in cart.items())
+        cur.execute(
+            "INSERT INTO pedidos (id_usuario, fecha, total) VALUES (%s, NOW(), %s) RETURNING id",
+            (user_id, total)
+        )
+        pedido_id = cur.fetchone()[0]
+
+        # 5) Insertar items del pedido
+        for pid_str, qty in cart.items():
+            precio = productos[int(pid_str)]['precio']
+            cur.execute(
+                "INSERT INTO items_pedido (pedido_id, producto_id, cantidad, precio) VALUES (%s, %s, %s, %s)",
+                (pedido_id, int(pid_str), qty, precio)
             )
 
         conn.commit()
-        # 2) Vaciar carrito
         session.pop('cart', None)
         flash('Compra realizada con éxito. ¡Gracias!', 'success')
+
     except Exception as e:
         conn.rollback()
-        flash(str(e), 'danger')
+        flash(f"Error al procesar la compra: {e}", 'danger')
     finally:
-        cur.close()
-        conn.close()
+        cur.close(); conn.close()
 
     return redirect(url_for('comprador_blueprint.comprador'))
 
@@ -178,7 +202,6 @@ def carrito():
         flash('Por favor, inicia sesión primero.', 'warning')
         return redirect(url_for('auth.login'))
 
-    # Obtener usuario para la base de la plantilla
     conn = get_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
@@ -192,11 +215,12 @@ def carrito():
     _init_cart()
     cart = session['cart']
     if not cart:
-        return render_template('comprador/carritoComprador.html',
-                               user=user,
-                               carrito_items=[], carrito_total=0)
+        return render_template(
+            'comprador/carritoComprador.html',
+            user=user,
+            carrito_items=[], carrito_total=0
+        )
 
-    # Traer detalles de los productos
     ids_list = [int(pid) for pid in cart.keys()]
     conn = get_connection()
     cur = conn.cursor()
@@ -207,16 +231,7 @@ def carrito():
     rows = cur.fetchall()
     cur.close(); conn.close()
 
-    productos = {
-        row[0]: {
-            'nombre':      row[1],
-            'descripcion': row[2],
-            'precio':      float(row[3]),
-            'imagen':      row[4],
-            'stock':       row[5]
-        }
-        for row in rows
-    }
+    productos = {row[0]: {'nombre': row[1], 'descripcion': row[2], 'precio': float(row[3]), 'imagen': row[4], 'stock': row[5]} for row in rows}
 
     carrito_items = []
     total = 0
@@ -228,16 +243,60 @@ def carrito():
         subtotal = prod['precio'] * qty
         total += subtotal
         carrito_items.append({
-            'id':         pid,
-            'nombre':     prod['nombre'],
-            'descripcion':prod['descripcion'],
-            'imagen':     prod['imagen'],
-            'cantidad':   qty,
-            'stock':      prod['stock'],
-            'subtotal':   subtotal
+            'id': pid,
+            'nombre': prod['nombre'],
+            'descripcion': prod['descripcion'],
+            'imagen': prod['imagen'],
+            'cantidad': qty,
+            'stock': prod['stock'],
+            'subtotal': subtotal
         })
 
-    return render_template('comprador/carritoComprador.html',
-                           user=user,
-                           carrito_items=carrito_items,
-                           carrito_total=total)
+    return render_template(
+        'comprador/carritoComprador.html',
+        user=user,
+        carrito_items=carrito_items,
+        carrito_total=total
+    )
+
+@main.route('/COMPRAS')
+def compras():
+    if not session.get('logueado'):
+        flash('Por favor, inicia sesión primero.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
+    user = cur.fetchone()
+    if not user:
+        cur.close(); conn.close()
+        flash('Usuario no encontrado.', 'danger')
+        return redirect(url_for('auth.login'))
+
+    user_id = user[0]
+    cur.execute(
+        "SELECT id, fecha, total FROM pedidos WHERE id_usuario = %s ORDER BY fecha DESC",
+        (user_id,)
+    )
+    pedidos = cur.fetchall()
+
+    historial = []
+    for ped in pedidos:
+        ped_id, fecha, total = ped
+        cur.execute(
+            "SELECT producto_id, cantidad, precio FROM items_pedido WHERE pedido_id = %s",
+            (ped_id,)
+        )
+        items = cur.fetchall()
+        items_list = [{'producto_id': it[0], 'cantidad': it[1], 'precio': float(it[2])} for it in items]
+        historial.append({
+            'id': ped_id,
+            'fecha': fecha,
+            'total': total,
+            'items': items_list
+        })
+    cur.close(); conn.close()
+
+    historial_objs = [SimpleNamespace(**ped) for ped in historial]
+    return render_template('comprador/misCompras.html', user=user, historial=historial_objs)
