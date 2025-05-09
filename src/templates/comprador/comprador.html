@@ -96,7 +96,7 @@
 
 
   <div class="product-cards-container">
-    <div class="row justify-content-center">
+    <div class="row g-4 justify-content-center">
       {% for p in producto %}
         <div class="col-md-3 col-sm-6 mb-4">
           <div class="card h-100 position-relative">
@@ -109,9 +109,9 @@
             
             {% if p[3] %}
             <img src="{{ url_for('comprador_blueprint.imagen_producto', producto_id=p[0]) }}"
-     class="card-img-top" alt="Imagen del producto"
-     style="width: 100%; height: 200px; object-fit: cover;"
-     onerror="this.onerror=null; this.src='/static/img/default.png';">
+              class="card-img-top" alt="Imagen del producto"
+              style="width: 100%; height: 200px; object-fit: cover;"
+              onerror="this.onerror=null; this.src='/static/img/default.png';">
 
             {% else %}
               <img src="https://via.placeholder.com/300x200?text=Sin+Imagen"

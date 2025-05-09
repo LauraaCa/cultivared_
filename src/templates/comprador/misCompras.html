@@ -1,6 +1,12 @@
 {% extends 'comprador/baseComprador.html' %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/compras.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container py-5">
+<div class="container compras-page py-5" style="margin-top:3rem !important;">
   <h2 class="mb-4">Mis compras</h2>
   {% if historial %}
     {% for pedido in historial %}
