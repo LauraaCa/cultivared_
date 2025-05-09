@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, Response, abort, render_template, request, redirect, url_for, session, flash
 from config import get_connection  # Conexión a PostgreSQL
 
 main = Blueprint('comprador_blueprint', __name__)
