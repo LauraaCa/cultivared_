@@ -78,7 +78,7 @@ def form():
             cur.close()
             conn.close()
 
-            return "<script>alert('Usuario registrado correctamente'); window.location.href = '/CULTIVARED/RegistroProductos';</script>"
+            return "<script>alert('=Producto registrado correctamente'); window.location.href = '/VENDEDOR/RegistroProductos';</script>"
 
         except Exception as e:
             flash(f"❌ Error al registrar el producto: {str(e)}", "danger")

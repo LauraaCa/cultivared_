@@ -21,6 +21,7 @@ class Usuarios(db.Model):
         'Transaccion', back_populates='usuario', lazy=True)
     transacciones_items = db.relationship(
         'TransaccionItem', back_populates='usuario', lazy=True)
+    pedidos = db.relationship('Pedido', back_populates='usuario', lazy=True)
 
 class Producto(db.Model):
     __tablename__ = "productos"
@@ -95,3 +96,25 @@ class ItemsCarrito(db.Model):
     __table_args__ = (
         db.UniqueConstraint('carrito_id', 'producto_id', name='_cart_prod_uc'),
     )
+
+class Pedido(db.Model):
+    __tablename__ = "pedidos"
+    id = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.BigInteger, db.ForeignKey('usuarios.id'), nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    total = db.Column(db.Numeric(10,2), nullable=False)
+
+    usuario = db.relationship('Usuarios', back_populates='pedidos')
+    items = db.relationship('ItemPedido', back_populates='pedido',
+                            cascade='all, delete-orphan', lazy=True)
+
+class ItemPedido(db.Model):
+    __tablename__ = "items_pedido"
+    id = db.Column(db.Integer, primary_key=True)
+    pedido_id = db.Column(db.Integer, db.ForeignKey('pedidos.id'), nullable=False)
+    producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio = db.Column(db.Numeric(10,2), nullable=False)
+
+    pedido = db.relationship('Pedido', back_populates='items')
+    producto = db.relationship('Producto')
