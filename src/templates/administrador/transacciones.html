@@ -1,9 +1,119 @@
 <!DOCTYPE html>
-
 {% extends 'administrador/baseAdmin.html' %}
 {% block body %}
-<div class="container mt-5">
-  <h2>Vista de transacciones</h2>
-  <!-- Aquí va todo lo relacionado con transacciones -->
+
+<!-- Enlace al CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminperfil.css') }}">
+
+<div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
+    <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">TRANSACCIONES</h1>
+
+    <!-- Mostrar mensajes flash si existen -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} text-center mt-3">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Contenedor de la tabla -->
+    <div class="table-container p-4 w-80 mt-4">
+        <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-bordered text-center table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Nombre usuario</th>
+                        <th>Email usuario</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Operaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaPedidos">
+                    {% for pedido in pedidos %}
+                    <tr>
+                        <td>{{ pedido.id_pedido }}</td>
+                        <td>{{ pedido.usuario_nombre }}</td>
+                        <td>{{ pedido.usuario_email }}</td>
+                        <td>{{ pedido.fecha }}</td>
+                        <td>${{ pedido.total }}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="verDetalles('{{ pedido.id_pedido }}')" data-bs-toggle="modal" data-bs-target="#modalDetalles">
+                                <img src="{{ url_for('static', filename='img/ojo.png') }}" alt="Detalles" class="icono-btn">  
+                                <span class="ms-2">Ver detalles</span>
+                            </button>
+                            <form action="{{ url_for('admin_blueprint.devolver_pago', pedido_id=pedido.id_pedido) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que quieres devolver este pago?')">
+                                    <img src="{{ url_for('static', filename='img/reembolso.png') }}" alt="Devolver" class="icono-btn">
+                                    <span class="ms-2">Devolver pago</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('admin_blueprint.admin') }}" class="btn btn-secondary">Volver al panel</a>
+    </div>
 </div>
+
+<!-- Modal para mostrar detalles -->
+<div class="modal fade" id="modalDetalles" tabindex="-1" aria-labelledby="modalTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitulo">Detalles del pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="contenidoDetalles">
+        <!-- Aquí se cargarán los detalles dinámicamente -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function verDetalles(idPedido) {
+  fetch('/ADMINISTRADOR/transacciones', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(response => response.json())
+    .then(pedidos => {
+      const pedido = pedidos.find(p => p.id_pedido == idPedido);
+      if (!pedido) {
+        document.getElementById("contenidoDetalles").innerHTML = "<p>No se encontraron detalles para este pedido.</p>";
+        return;
+      }
+
+      let detalles = `<h4>Pedido #${pedido.id_pedido}</h4>
+                      <p><strong>Usuario:</strong> ${pedido.usuario_nombre} (${pedido.usuario_email})</p>
+                      <p><strong>Fecha:</strong> ${pedido.fecha}</p>
+                      <p><strong>Total:</strong> $${pedido.total}</p>
+                      <h5>Productos:</h5>
+                      <ul>`;
+      pedido.productos.forEach(prod => {
+        detalles += `<li>Producto ID ${prod.producto_id} — Cantidad: ${prod.cantidad} — Precio unitario: $${prod.precio_unitario}</li>`;
+      });
+      detalles += `</ul>`;
+
+      document.getElementById("contenidoDetalles").innerHTML = detalles;
+    })
+    .catch(error => {
+      console.error("Error al cargar detalles:", error);
+      document.getElementById("contenidoDetalles").innerHTML = "<p>Error al cargar los detalles.</p>";
+    });
+}
+
+
+</script>
+
 {% endblock %}

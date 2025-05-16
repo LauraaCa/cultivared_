@@ -1,8 +1,8 @@
 import io
 import os
-from flask import Flask, flash, render_template, Blueprint, request, redirect, send_file, url_for, session, send_file
+from flask import Flask, flash, jsonify, render_template, Blueprint, request, redirect, send_file, url_for, session, send_file
 from config import get_connection
-from models import db, Usuarios, Producto, Transaccion, TransaccionItem
+from models import ItemPedido, db, Usuarios, Producto, Transaccion, Pedido
 
 
 # Definir el Blueprint antes de usarlo
@@ -52,21 +52,60 @@ def perfil():
 
 # TRANSACCIONES
 # Definir la ruta de transacciones
-@main.route('/transacciones')
-def transacciones():
-    if 'logueado' in session and session['logueado']:
-        # Conecta a la BD y obtener el usuario actual
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM usuarios WHERE email = %s', (session['email'],))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
+from flask import jsonify, request
 
-        # user al render_template
-        return render_template('administrador/transacciones.html', user=user)
+@main.route('/transacciones', methods=['GET'])
+def transacciones():
+    pedidos = Pedido.query.order_by(Pedido.fecha.desc()).all()
+
+    lista_pedidos = []
+    for pedido in pedidos:
+        productos = [{"producto_id": item.producto_id, "cantidad": item.cantidad, "precio_unitario": item.producto.precio}
+                     for item in pedido.items]
+
+        lista_pedidos.append({
+            "id_pedido": pedido.id,
+            "usuario_nombre": pedido.usuario.nombre,
+            "usuario_email": pedido.usuario.email,
+            "fecha": pedido.fecha.strftime("%Y-%m-%d %H:%M"),
+            "total": float(pedido.total),
+            "productos": productos
+        })
+    
+    # Si la petición viene desde JavaScript (fetch), devolver JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify(lista_pedidos)
+    
+    return render_template('administrador/transacciones.html', pedidos=lista_pedidos)
+
+    
+# Definir la ruta de devolver pago
+from flask import url_for
+
+@main.route('/devolver_pago/<int:pedido_id>', methods=['POST'])
+def devolver_pago(pedido_id):
+    pedido = Pedido.query.get(pedido_id)
+
+    if not pedido:
+        return f"""<script>alert('Pedido no encontrado');window.location.href='{url_for('admin_blueprint.transacciones')}';</script>"""
+
+    if pedido.total <= 0:
+        return f"""<script>alert('No se puede devolver un pago con total cero');window.location.href='{url_for('admin_blueprint.transacciones')}';</script>"""
+
+    resultado = procesar_reembolso(pedido)
+
+    if resultado:
+        pedido.total = 0  # Marcar el pedido como reembolsado
+        db.session.commit()
+        return f"""<script>alert('Reembolso procesado exitosamente');window.location.href='{url_for('admin_blueprint.transacciones')}';</script>"""
     else:
-        return """<script>alert("No estás logueado.");window.location.href="/CULTIVARED/login";</script>"""
+        return f"""<script>alert('Error al procesar el reembolso');window.location.href='{url_for('admin_blueprint.transacciones')}';</script>"""
+
+
+def procesar_reembolso(pedido):
+    # Simulación de API de pago
+    print(f"Procesando reembolso de ${pedido.total} para el pedido {pedido.id}")
+    return True  # Simula éxito
 
 # PRODUCTOS
 # Definir la ruta de productos
@@ -201,6 +240,12 @@ def eliminar_producto(id):
         flash("El producto no existe.", "error")
         return redirect(url_for('admin_blueprint.productos'))
 
+    # Verificar si el producto tiene transacciones registradas
+    if ItemPedido.query.filter_by(producto_id=id).first():
+        flash("No puedes eliminar este producto porque tiene transacciones registradas.", "warning")
+        return redirect(url_for('admin_blueprint.productos'))
+
+    # Si no tiene transacciones, proceder con la eliminación
     db.session.delete(producto)
     db.session.commit()
 
@@ -414,7 +459,6 @@ def eliminar_usuario(id):
     flash("Usuario eliminado correctamente.", "success")
     return redirect(url_for('admin_blueprint.usuarios'))
 
-
 # Definir la ruta de editar
 @main.route('/editar/<int:user_id>', methods=['GET', 'POST'])
 def editar(user_id):
@@ -513,7 +557,7 @@ def exportar_reporte_general_pdf():
     for usuario in usuarios:
         data_usuarios.append([usuario.id, usuario.nombre, usuario.apellido, usuario.email])
 
-    tabla_usuarios = Table(data_usuarios, colWidths=[50, 100, 100, 200])
+    tabla_usuarios = Table(data_usuarios, colWidths=[70, 100, 100, 200])
     tabla_usuarios.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -532,7 +576,7 @@ def exportar_reporte_general_pdf():
     for producto in productos:
         data_productos.append([producto.id, producto.nombre, f"${producto.precio}", producto.cantidad])
 
-    tabla_productos = Table(data_productos, colWidths=[50, 150, 100, 80])
+    tabla_productos = Table(data_productos, colWidths=[70, 150, 100, 80])
     tabla_productos.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.green),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -546,19 +590,19 @@ def exportar_reporte_general_pdf():
     elements.append(Paragraph("<b>📌 Transacciones</b>", styles["Heading2"]))
     elements.append(Spacer(1, 10))
 
-    transacciones = Transaccion.query.all()
-    data_transacciones = [["ID", "Usuario", "Total", "Estado"]]
-    for transaccion in transacciones:
-        data_transacciones.append([transaccion.id, transaccion.id_usuario, f"${transaccion.total}", transaccion.estado])
+    pedidos = Pedido.query.all()
+    data_pedidos = [["ID", "Usuario", "Fecha", "Total"]]
+    for pedidos in pedidos:
+        data_pedidos.append([pedidos.id, pedidos.id_usuario, pedidos.fecha, f"${pedidos.total}"])
 
-    tabla_transacciones = Table(data_transacciones, colWidths=[50, 100, 100, 100])
-    tabla_transacciones.setStyle(TableStyle([
+    tabla_pedidos = Table(data_pedidos, colWidths=[50, 100, 150, 100])
+    tabla_pedidos.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.blue),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ]))
-    elements.append(tabla_transacciones)
+    elements.append(tabla_pedidos)
 
     # Generar el PDF
     doc.build(elements)
@@ -574,24 +618,28 @@ def estadisticas():
     num_usuarios = Usuarios.query.count()
     num_vendedores = Usuarios.query.filter_by(rol="Vendedor").count()
     num_compradores = Usuarios.query.filter_by(rol="Comprador").count()
+    num_transacciones = Pedido.query.count()
+    num_productos = Producto.query.count()
 
-    productos_mas_vendidos = db.session.query(Producto.nombre, func.count(Producto.id))\
+    productos_mas_vendidos = db.session.query(Producto.nombre, func.sum(ItemPedido.cantidad))\
+        .join(ItemPedido, Producto.id == ItemPedido.producto_id)\
         .group_by(Producto.nombre)\
-        .order_by(func.count(Producto.id).desc()).limit(5).all()
+        .order_by(func.sum(ItemPedido.cantidad).desc()).limit(3).all()
 
-    productos_menos_vendidos = db.session.query(Producto.nombre, func.count(Producto.id))\
+    productos_menos_vendidos = db.session.query(Producto.nombre, func.sum(ItemPedido.cantidad))\
+        .join(ItemPedido, Producto.id == ItemPedido.producto_id)\
         .group_by(Producto.nombre)\
-        .order_by(func.count(Producto.id).asc()).limit(5).all()
+        .order_by(func.sum(ItemPedido.cantidad).asc()).limit(3).all()
 
     productos_stock = db.session.query(Producto.nombre, Producto.cantidad).all()
-
-    # Convertir datos a formato correcto
     productos_stock = [{"nombre": p[0], "cantidad": p[1]} for p in productos_stock]
 
     return render_template('administrador/admin_estadisticas.html', 
                            num_usuarios=num_usuarios, 
                            num_vendedores=num_vendedores,
                            num_compradores=num_compradores,
-                           productos_mas_vendidos=[p[0] for p in productos_mas_vendidos],
-                           productos_menos_vendidos=[p[0] for p in productos_menos_vendidos],
+                           num_transacciones=num_transacciones,  # 🔥 Nuevo dato
+                           num_productos=num_productos,  # 🔥 Nuevo dato
+                           productos_mas_vendidos=[{"nombre": p[0], "cantidad": p[1]} for p in productos_mas_vendidos],
+                           productos_menos_vendidos=[{"nombre": p[0], "cantidad": p[1]} for p in productos_menos_vendidos],
                            productos_stock=productos_stock)

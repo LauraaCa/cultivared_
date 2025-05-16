@@ -8,6 +8,17 @@
 <div class="container d-flex flex-column align-items-center justify-content-start" style="min-height: 80vh;">
   <h1 id="panel-title" class="text-center mb-4" style="margin-top: 80px;">USUARIOS</h1>
 
+  <!-- Mostrar mensajes flash si existen -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} text-center mt-3">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
   <!-- Filtro para seleccionar tipo de usuario -->
   <div class="mb-3 text-center">
     <label for="filtroRol" class="form-label"><strong>Filtrar por categoría:</strong></label>

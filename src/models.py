@@ -19,8 +19,8 @@ class Usuarios(db.Model):
         'Producto', back_populates='vendedor', lazy=True)
     transacciones = db.relationship(
         'Transaccion', back_populates='usuario', lazy=True)
-    transacciones_items = db.relationship(
-        'TransaccionItem', back_populates='usuario', lazy=True)
+  #  transacciones_items = db.relationship(
+       # 'TransaccionItem', back_populates='usuario', lazy=True)
     pedidos = db.relationship('Pedido', back_populates='usuario', lazy=True)
 
 class Producto(db.Model):
@@ -50,26 +50,26 @@ class Transaccion(db.Model):
 
     usuario = db.relationship(
         'Usuarios', back_populates='transacciones')
-    items = db.relationship(
-        'TransaccionItem', back_populates='transaccion',
-        cascade='all, delete-orphan', lazy=True)
+    #items = db.relationship(
+     #   'TransaccionItem', back_populates='transaccion',
+      #  cascade='all, delete-orphan', lazy=True)
 
-class TransaccionItem(db.Model):
-    __tablename__ = "transacciones_items"
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    id_usuario = db.Column(
-        db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
-    id_transaccion = db.Column(
-        db.BigInteger, db.ForeignKey("transacciones.id", ondelete="CASCADE"), nullable=False)
-    fecha = db.Column(
-        db.DateTime, default=db.func.current_timestamp(), nullable=False)
-    total = db.Column(db.Numeric(10,2), nullable=False)
-    descripcion = db.Column(db.Text, nullable=True)
-
-    usuario = db.relationship(
-        'Usuarios', back_populates='transacciones_items')
-    transaccion = db.relationship(
-        'Transaccion', back_populates='items')
+#class TransaccionItem(db.Model):
+#    __tablename__ = "transacciones_items"
+ #   id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+ #   id_usuario = db.Column(
+ #       db.BigInteger, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
+ #   id_transaccion = db.Column(
+ #       db.BigInteger, db.ForeignKey("transacciones.id", ondelete="CASCADE"), nullable=False)
+ #   fecha = db.Column(
+ #       db.DateTime, default=db.func.current_timestamp(), nullable=False)
+ #   total = db.Column(db.Numeric(10,2), nullable=False)
+ #   descripcion = db.Column(db.Text, nullable=True)
+#
+ #   usuario = db.relationship(
+ #       'Usuarios', back_populates='transacciones_items')
+ #   transaccion = db.relationship(
+ #      'Transaccion', back_populates='items')
 
 class Carrito(db.Model):
     __tablename__ = "carrito"
