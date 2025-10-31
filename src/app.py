@@ -22,4 +22,4 @@ app.register_blueprint(gestor.main, url_prefix='/GESTOR')
 app.register_error_handler(404, page_not_found)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
